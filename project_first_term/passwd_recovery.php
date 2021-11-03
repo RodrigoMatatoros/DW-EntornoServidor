@@ -1,7 +1,3 @@
-<?php
-    //if the email is correct, print: An email has been send for the recovery of your password.
-?>
-
 <!DOCTYPE html>
 
 <html lang="en">
@@ -16,11 +12,22 @@
             <fieldset>
                 <legend>Password Recovery</legend>
                 <label for="email-passwd-recover">Email for the recovery*</label>
-                <input type="email" id="email-passwd-recovery" value = "<?php if(isset($email_passwdRecovery))echo $email_passwdRecovery;?>" ><br/>
+                <input type="email" id="email-passwd-recovery" name="email-passwd-recovery" value = "<?php if(isset($recovery_email))echo $recovery_email;?>" ><br/>
 
                 <button type="submit">Send</button>
                 <button type="reset">Cancel</button>
             </fieldset>
         </form>
+
+        <?php
+            require "utilities.php";
+            
+            //if the email is correct, print: An email has been send for the recovery of your password.
+            if($_SERVER['REQUEST_METHOD'] == 'POST'){
+                $recovery_email = $_POST['email-passwd-recovery'];
+                $url = 'passwd_recovery_process.php';
+                send_passwd_recovery_email($recovery_email, $url);
+            }
+        ?>
     </body>
 </html>
