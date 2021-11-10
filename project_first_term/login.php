@@ -1,9 +1,9 @@
 <?php
     require_once 'utilities.php';
-
     if ($_SERVER["REQUEST_METHOD"] == "POST") {  
+        var_dump($_POST['user-login']);
     
-        $usu = check_user($_POST['user-login'], $_POST['passwd-login']);
+        $usu = check_user_login($_POST['user-login'], $_POST['passwd-login']);
         if($usu === FALSE){
             $err = TRUE;
             $user = $_POST['user-login'];
@@ -42,8 +42,8 @@
 
                 <label for="passwd-login">Password</label>
                 <input type="password" id="passwd-login" value = "<?php if(isset($passwd))echo $passwd;?>" name="passwd-login" placeholder="Password"><br/>
-                <!-- <a href="index.php?page=passwd_recovery">Forgot your password?</a><br/><br/> -->
                 <a href="passwd_recovery.php">Forgot your password?</a><br/><br/>
+                <!-- <a href="passwd_recovery.php">Forgot your password?</a><br/><br/> -->
 
                 <button type="submit">Login</button>
                 <button type="reset">Cancel</button><br/><br/>

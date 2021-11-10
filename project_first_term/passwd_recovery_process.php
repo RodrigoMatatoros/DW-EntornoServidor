@@ -14,11 +14,11 @@
                 <label for="user-recover">User*</label>
                 <input type="text" id="user-recover" name="user-recover" value="<?php if(isset($recovery_email))echo $recovery_email;?>" required /><br/>
 
-                <label for="new-password">New Password*</label>
-                <input type="password" id="new-password" name="new-password" value="<?php if(isset($recovery_email))echo $recovery_email;?>" required /><br/>
+                <label for="new-passwd">New Password*</label>
+                <input type="password" id="new-passwd" name="new-passwd" value="<?php if(isset($recovery_email))echo $recovery_email;?>" required /><br/>
 
-                <label for="new-password-confirmation">Password Confirmation*</label>
-                <input type="password" id="new-passwod-confirmation" name="new-password-confirmation" value="<?php if(isset($recovery_email))echo $recovery_email;?>" required /><br/>
+                <label for="new-passwd-confirmation">Password Confirmation*</label>
+                <input type="password" id="new-passwd-confirmation" name="new-passwd-confirmation" value="<?php if(isset($recovery_email))echo $recovery_email;?>" required /><br/>
                 
                 <button type="submit">Send</button>
                 <button type="reset">Cancel</button>
@@ -30,9 +30,25 @@
             
             //if the email is correct, print: An email has been send for the recovery of your password.
             if($_SERVER['REQUEST_METHOD'] == 'POST'){
-                $recovery_email = $_POST['email-passwd-recovery'];
-                $url = 'passwd_recovery_process.php';
-                send_passwd_recovery_email($recovery_email, $url);
+                $username = $_POST['user-recovery'];
+                $newPassword = $_POST['new-passwd'];
+                $newPasswordConfirmation = $_POST['new-passwd-confirmation'];
+
+                if($newPassword === $newPasswordConfirmation){
+                    //check smth with ids too
+                    $encryptedPassword = password_hash($newPassword);
+                    $query = "UPDATE chatapp.users SET users.passwd = '$encryptedPassword' WHERE users.username LIKE '$username'";
+                    $result = $bd->query($query);
+                    //update confirmation (?)
+                    if($result->rowCount() === 1){		
+                        echo '<p style="color:lightgreen">**SUCCESS: the password was updated correctly!</p>';
+                        return $result->fetch();		
+                    } else {
+                        return FALSE;
+                    }
+                } else {
+                    echo '<p style="color:red">**ERROR: the password and its confirmation do not match!</p>';
+                }
             }
         ?>
     </body>

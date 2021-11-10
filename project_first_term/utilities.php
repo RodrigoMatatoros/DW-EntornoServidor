@@ -34,8 +34,26 @@
 		}
 	}
 
-        
-    function check_user($user, $passwd){
+    function check_user_registration($user, $email){
+        try{
+            $connection_data = configBD("conf.xml");
+            $bd = new PDO($connection_data[0], $connection_data[1], $connection_data[2]);
+            // echo "Connected";
+        } catch (PDOException $e) {
+            echo '<p style="color:red">**Database error: ' . $e->getMessage() . '</p>';
+        }
+
+        $query = "SELECT * FROM chatapp.users WHERE users.username like '$user' or users.email like '$email'";
+        $result = $bd->query($query);
+
+        if($result->rowCount() === 1){		
+            return $result->fetch();		
+        } else {
+            return FALSE;
+        }
+    }
+
+    function check_user_login($user, $passwd){
         try {
             $connection_data = configBD("conf.xml");
             $bd = new PDO($connection_data[0], $connection_data[1], $connection_data[2]);
@@ -87,7 +105,7 @@
             if(!$result) {
                 echo "Error" . $mail->ErrorInfo;
             } else {
-                echo "An email with instructions has been sent to: " . $recovery_email;
+                echo "An email with instructions has been sent to: <b>" . $recovery_email.'</b>';
                 $recovery_email = null;
             }
         }

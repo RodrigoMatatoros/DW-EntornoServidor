@@ -20,7 +20,7 @@
         </form>
 
         <?php
-            require "utilities.php";
+            require_once "utilities.php";
             
             //if the email is correct, print: An email has been send for the recovery of your password.
             if($_SERVER['REQUEST_METHOD'] == 'POST'){

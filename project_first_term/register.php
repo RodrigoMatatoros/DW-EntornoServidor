@@ -2,15 +2,33 @@
     require_once 'utilities.php';
 
     if($_SERVER["REQUEST_METHOD"] == 'POST'){
-        $user = check_user();
-        if($user === FALSE){
+        $user = check_user_registration($_POST['user-register']);
+        if($user === TRUE){
             $err = TRUE;
-            $user = $_POST['user'];
+            // $user = $_POST['user'];
+            echo '<p style="color:red">**ERROR: the username or the email already exists.</p>';
         } else {
+            $name = $_POST['name-register'];
+            $surname = $_POST['surname-register'];
+            $user = $_POST['user-register'];
+            $email = $_POST['email-register'];
+            $passwd = password_hash($_POST['passwd-register']);
+            //make the password confirmation
+            $age = $_POST['age-register'];
+            $tel = $_POST['tel-register'];
+
+            $query = "INSERT INTO chatapp.users (id, usName, usSurname, username, email, passwd, age, isActive) VALUES (NULL, '$name', '$surname', '$user', '$email', '$passwd', '$age', '0');";
+            $result = $bd->query($query);
+            //insert confirmation
+            if($result->rowCount() === 1){
+                echo '<p style="color:lightgreen">**SUCCESS: Registration complete!</p>';		
+                return $result->fetch();	
+            } else {
+                return FALSE;
+            }
             session_start();
             $_SESSION['user'] = $user;
-            $_SESSION['cart'] = [];
-            header('Location: index.php');
+            header('Location: index.html');
             return;
         }
     }
@@ -47,10 +65,12 @@
                 <input type="text" id="user-register" value="<?php if(isset($user))echo $user;?>" name="user-register" placeholder="Username" required/><br/>
                 
                 <label for="email-register">Email*</label>
-                <input type="email" id="user-register" value="<?php if(isset($email))echo $email;?>" name="email-register" placeholder="Email address" required/><br/>
+                <input type="email" id="email-register" value="<?php if(isset($email))echo $email;?>" name="email-register" placeholder="Email address" required/><br/>
 
                 <label for="passwd-register">Password*</label>
                 <input type="password" id="passwd-register" value = "<?php if(isset($passwd))echo $passwd;?>" name="passwd-register" placeholder="Password" required /><br/>
+
+                <!--make a password confirmation here-->
 
                 <label for="age-register">Age*</label>
                 <input type="number" min=16 max=99 id="age-register" value="<?php if(isset($age))echo $age;?>"/><br/>

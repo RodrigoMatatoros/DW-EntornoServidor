@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS users (
   usSurname varchar(30) NOT NULL,
   username varchar(30) NOT NULL,
   email varchar(30) NOT NULL UNIQUE,
+  age int NOT NULL,
+  telephone varchar(16) NOT NULL,
   passwd varchar(100) NOT NULL,
     isActive BOOLEAN NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
@@ -42,3 +44,5 @@ CREATE TABLE IF NOT EXISTS participate_users_chats(
     FOREIGN KEY (senderID) REFERENCES users(id),
     FOREIGN KEY (receiverID) REFERENCES users(id)
 );
+
+INSERT INTO `users` (`id`, `usName`, `usSurname`, `username`, `email`, `passwd`, `isActive`) VALUES (NULL, 'root', 'root', 'root', 'root', '', '0');
