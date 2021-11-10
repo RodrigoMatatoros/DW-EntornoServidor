@@ -36,7 +36,7 @@
 
                 if($newPassword === $newPasswordConfirmation){
                     //check smth with ids too
-                    $encryptedPassword = password_hash($newPassword);
+                    $encryptedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                     $query = "UPDATE chatapp.users SET users.passwd = '$encryptedPassword' WHERE users.username LIKE '$username'";
                     $result = $bd->query($query);
                     //update confirmation (?)

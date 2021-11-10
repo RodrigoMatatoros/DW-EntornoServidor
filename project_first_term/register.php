@@ -1,18 +1,18 @@
 <?php
-    require_once 'utilities.php';
+    require 'utilities.php';
 
     if($_SERVER["REQUEST_METHOD"] == 'POST'){
-        $user = check_user_registration($_POST['user-register']);
+        $user = check_user_registration($_POST['user-register'], $_POST['email-register']);
         if($user === TRUE){
             $err = TRUE;
             // $user = $_POST['user'];
-            echo '<p style="color:red">**ERROR: the username or the email already exists.</p>';
+            echo '<p style="color:red">**ERROR: the username or the email is already registered.</p>';
         } else {
             $name = $_POST['name-register'];
             $surname = $_POST['surname-register'];
             $user = $_POST['user-register'];
             $email = $_POST['email-register'];
-            $passwd = password_hash($_POST['passwd-register']);
+            $passwd = password_hash($_POST['passwd-register'], PASSWORD_DEFAULT);
             //make the password confirmation
             $age = $_POST['age-register'];
             $tel = $_POST['tel-register'];
@@ -27,7 +27,7 @@
                 return FALSE;
             }
             session_start();
-            $_SESSION['user'] = $user;
+            $_SESSION['user'] = $us;
             header('Location: index.html');
             return;
         }
@@ -78,7 +78,7 @@
                 <label for="tel-register">Telephone number</label>
                 <input type="tel" id="tel-register" value="<?php if(isset($phone_number))echo $phone_number;?>"/><br/><br/>
 
-                <button type="submit">Login</button>
+                <button type="submit">Register</button>
                 <button type="reset">Cancel</button><br/>
 
             </fieldset>

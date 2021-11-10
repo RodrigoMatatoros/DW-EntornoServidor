@@ -9,7 +9,7 @@
             $user = $_POST['user-login'];
         }else{
             session_start();
-            $_SESSION['user-login'] = $usu;
+            $_SESSION['user-login'] = $us;
             header("Location: index.html");
             return;
         }	
