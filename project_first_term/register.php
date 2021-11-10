@@ -1,19 +1,19 @@
 <?php
     require_once 'utilities.php';
 
-    // if($_SERVER["REQUEST_METHOD"] == 'POST'){
-    //     $user = check_user();
-    //     if($user === FALSE){
-    //         $err = TRUE;
-    //         $user = $_POST['user'];
-    //     } else {
-    //         session_start();
-    //         $_SESSION['user'] = $user;
-    //         $_SESSION['cart'] = [];
-    //         header('Location: index.php');
-    //         return;
-    //     }
-    // }
+    if($_SERVER["REQUEST_METHOD"] == 'POST'){
+        $user = check_user();
+        if($user === FALSE){
+            $err = TRUE;
+            $user = $_POST['user'];
+        } else {
+            session_start();
+            $_SESSION['user'] = $user;
+            $_SESSION['cart'] = [];
+            header('Location: index.php');
+            return;
+        }
+    }
 ?>
 
 <!DOCTYPE html>

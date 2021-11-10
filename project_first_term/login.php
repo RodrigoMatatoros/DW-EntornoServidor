@@ -1,18 +1,18 @@
 <?php
     require_once 'utilities.php';
 
-    if($_SERVER["REQUEST_METHOD"] == 'POST'){
-        $user = check_user();
-        if($user === FALSE){
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {  
+    
+        $usu = check_user($_POST['user-login'], $_POST['passwd-login']);
+        if($usu === FALSE){
             $err = TRUE;
-            $user = $_POST['user'];
-        } else {
+            $user = $_POST['user-login'];
+        }else{
             session_start();
-            $_SESSION['user'] = $user;
-            $_SESSION['cart'] = [];
-            header('Location: index.php');
+            $_SESSION['user-login'] = $usu;
+            header("Location: index.html");
             return;
-        }
+        }	
     }
 ?>
 
@@ -30,8 +30,8 @@
             <h1>SAMPLE TEXT</h1>
         </header>
         <?php
-            if(isset($_GET["redirected"])){echo "<p>Login to continue</p>";}
-		    if(isset($err) and $err == TRUE){echo "<p>Check user and password</p>";}
+            // if(isset($_GET["redirected"])){echo "<p>Login to continue</p>";}
+		    if(isset($err) and $err == TRUE){echo '<p style="color:red">ERROR: Check user and password</p>';}
 		?>
 
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method='POST'>
@@ -42,6 +42,7 @@
 
                 <label for="passwd-login">Password</label>
                 <input type="password" id="passwd-login" value = "<?php if(isset($passwd))echo $passwd;?>" name="passwd-login" placeholder="Password"><br/>
+                <!-- <a href="index.php?page=passwd_recovery">Forgot your password?</a><br/><br/> -->
                 <a href="passwd_recovery.php">Forgot your password?</a><br/><br/>
 
                 <button type="submit">Login</button>

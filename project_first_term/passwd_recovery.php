@@ -12,7 +12,7 @@
             <fieldset>
                 <legend>Password Recovery</legend>
                 <label for="email-passwd-recover">Email for the recovery*</label>
-                <input type="email" id="email-passwd-recovery" name="email-passwd-recovery" value = "<?php if(isset($recovery_email))echo $recovery_email;?>" ><br/>
+                <input type="email" id="email-passwd-recovery" name="email-passwd-recovery" /><br/>
 
                 <button type="submit">Send</button>
                 <button type="reset">Cancel</button>
