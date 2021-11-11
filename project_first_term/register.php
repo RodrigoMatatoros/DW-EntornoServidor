@@ -1,12 +1,13 @@
 <?php
-    require 'utilities.php';
+    require_once 'utilities.php';
 
     if($_SERVER["REQUEST_METHOD"] == 'POST'){
-        $user = check_user_registration($_POST['user-register'], $_POST['email-register']);
+        $user = check_user_registration($_POST['user-register'], $_POST['email-register'], $bd);
         if($user === TRUE){
             $err = TRUE;
             // $user = $_POST['user'];
             echo '<p style="color:red">**ERROR: the username or the email is already registered.</p>';
+            return;
         } else {
             $name = $_POST['name-register'];
             $surname = $_POST['surname-register'];
@@ -14,18 +15,12 @@
             $email = $_POST['email-register'];
             $passwd = password_hash($_POST['passwd-register'], PASSWORD_DEFAULT);
             //make the password confirmation
-            $age = $_POST['age-register'];
+            $age = intval($_POST['age-register']);
             $tel = $_POST['tel-register'];
 
-            $query = "INSERT INTO chatapp.users (id, usName, usSurname, username, email, passwd, age, isActive) VALUES (NULL, '$name', '$surname', '$user', '$email', '$passwd', '$age', '0');";
-            $result = $bd->query($query);
-            //insert confirmation
-            if($result->rowCount() === 1){
-                echo '<p style="color:lightgreen">**SUCCESS: Registration complete!</p>';		
-                return $result->fetch();	
-            } else {
-                return FALSE;
-            }
+        var_dump($result);
+            register_user($name, $surname, $user, $email, $passwd, $age, $tel, $bd);
+            
             session_start();
             $_SESSION['user'] = $us;
             header('Location: index.html');
@@ -59,7 +54,7 @@
                 <input type="text" id="name-register" value = "<?php if(isset($name))echo $name;?>" name="name-register" placeholder="Name" required /><br/>
 
                 <label for="surname-register">Surname(s)*</label>
-                <input type="text" id="surname-register" value = "<?php if(isset($surname))echo $surname;?>" name="surname-register" placeholder="surname-register" required /><br/>
+                <input type="text" id="surname-register" value = "<?php if(isset($surname))echo $surname;?>" name="surname-register" placeholder="Surname" required /><br/>
                 
                 <label for="user-register">Username*</label>
                 <input type="text" id="user-register" value="<?php if(isset($user))echo $user;?>" name="user-register" placeholder="Username" required/><br/>
@@ -73,10 +68,10 @@
                 <!--make a password confirmation here-->
 
                 <label for="age-register">Age*</label>
-                <input type="number" min=16 max=99 id="age-register" value="<?php if(isset($age))echo $age;?>"/><br/>
+                <input type="number" min=16 max=99 id="age-register" value="<?php if(isset($age))echo $age;?>" name="age-register" /><br/>
 
                 <label for="tel-register">Telephone number</label>
-                <input type="tel" id="tel-register" value="<?php if(isset($phone_number))echo $phone_number;?>"/><br/><br/>
+                <input type="tel" id="tel-register" value="<?php if(isset($phone_number))echo $phone_number;?>" name="tel-register" /><br/><br/>
 
                 <button type="submit">Register</button>
                 <button type="reset">Cancel</button><br/>

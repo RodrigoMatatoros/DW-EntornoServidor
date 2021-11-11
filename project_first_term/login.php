@@ -1,9 +1,8 @@
 <?php
     require_once 'utilities.php';
     if ($_SERVER["REQUEST_METHOD"] == "POST") {  
-        var_dump($_POST['user-login']);
     
-        $usu = check_user_login($_POST['user-login'], $_POST['passwd-login']);
+        $usu = check_user_login($_POST['user-login'], password_hash($_POST['passwd-login'], PASSWORD_DEFAULT), $bd);
         if($usu === FALSE){
             $err = TRUE;
             $user = $_POST['user-login'];

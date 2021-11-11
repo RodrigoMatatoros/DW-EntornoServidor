@@ -2,15 +2,13 @@
     use PHPMailer\PHPMailer\PHPMailer;
     require "../vendor/autoload.php";
     
-    // function dbConnect(){
-	// 	try {
-	// 		$connection_data = configBD("conf.xml");
-	// 		$bd = new PDO($connection_data[0], $connection_data[1], $connection_data[2]);
-	// 		echo "Connected";
-	// 	}catch (PDOException $e) {
-	// 		echo '**Database error: ' . $e->getMessage();
-	// 	} 
-	// }
+		try {
+			$connection_data = configBD("conf.xml");
+			$bd = new PDO($connection_data[0], $connection_data[1], $connection_data[2]);
+			// echo "Connected";
+		}catch (PDOException $e) {
+			echo '**Database error: ' . $e->getMessage();
+		} 
     
 	function configBD($file){
 		$data = simplexml_load_file($file);
@@ -34,15 +32,7 @@
 		}
 	}
 
-    function check_user_registration($user, $email){
-        try{
-            $connection_data = configBD("conf.xml");
-            $bd = new PDO($connection_data[0], $connection_data[1], $connection_data[2]);
-            // echo "Connected";
-        } catch (PDOException $e) {
-            echo '<p style="color:red">**Database error: ' . $e->getMessage() . '</p>';
-        }
-
+    function check_user_registration($user, $email, $bd){
         $query = "SELECT * FROM chatapp.users WHERE users.username like '$user' or users.email like '$email'";
         $result = $bd->query($query);
 
@@ -53,20 +43,27 @@
         }
     }
 
-    function check_user_login($user, $passwd){
-        try {
-            $connection_data = configBD("conf.xml");
-            $bd = new PDO($connection_data[0], $connection_data[1], $connection_data[2]);
-            // echo "Connected";
-        } catch (PDOException $e) {
-            echo '<p style="color:red">**Database error: ' . $e->getMessage() . '</p>';
-        }
-
-        $query = "SELECT * FROM chatapp.users WHERE users.username like '$user' and users.passwd like '$passwd'";
+    function register_user($name, $surname, $username, $email, $passwd, $age, $tel, $bd){
+        $query = "INSERT INTO chatapp.users (id, usName, usSurname, username, email, passwd, age, isActive) VALUES (NULL, '$name', '$surname', '$username', '$email', '$passwd', '$age', '0');";
         $result = $bd->query($query);
+        //insert confirmation
+        if($result->rowCount() === 1){
+            echo '<p style="color:lightgreen">**SUCCESS: Registration complete!</p>';		
+            return $result->fetch();	
+        } else {
+            return FALSE;
+        }
+    }
 
-        if($result->rowCount() === 1){		
-            return $result->fetch();		
+    function check_user_login($user, $passwd, $bd){
+
+        // $query = "SELECT * FROM chatapp.users WHERE users.username like '$user' and users.passwd like '$passwd'";
+        $query = "SELECT users.passwd FROM chatapp.users WHERE users.username LIKE '$user'";
+        $result = $bd->query($query);
+        $result = $result->fetch();
+        
+        if($result->rowCount() > 0){
+            if(password_verify($passwd, strval($result))){header('Location: index.html');}
         } else {
             return FALSE;
         }
