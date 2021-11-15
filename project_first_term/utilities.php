@@ -34,39 +34,83 @@
 
     function check_user_registration($user, $email, $bd){
         $query = "SELECT * FROM chatapp.users WHERE users.username like '$user' or users.email like '$email'";
+        $bd->query($query);
         $result = $bd->query($query);
+        // var_dump($result);
+        // $result = $bd->fetch();
+        // var_dump($result);
 
-        if($result->rowCount() === 1){		
-            return $result->fetch();		
-        } else {
-            return FALSE;
-        }
+        return $result->fetch();
+
+        // if($result->rowCount() === 1){
+        //     echo '<p style="color:lightgreen">**SUCCESS: Registration complete!</p>';			
+        //     // return $result->fetch();
+        // } else {
+        //     echo '<p style="color:red">**ERROR: Check user or password!</p>';
+        // }
     }
 
     function register_user($name, $surname, $username, $email, $passwd, $age, $tel, $bd){
         $query = "INSERT INTO chatapp.users (id, usName, usSurname, username, email, passwd, age, isActive) VALUES (NULL, '$name', '$surname', '$username', '$email', '$passwd', '$age', '0');";
         $result = $bd->query($query);
         //insert confirmation
-        if($result->rowCount() === 1){
+        if($result->rowCount() > 0){
             echo '<p style="color:lightgreen">**SUCCESS: Registration complete!</p>';		
-            return $result->fetch();	
+            // return $result->fetch();
         } else {
-            return FALSE;
+            echo '<p style="color:red">**ERROR: Check user or password!</p>';
         }
     }
 
     function check_user_login($user, $passwd, $bd){
 
-        // $query = "SELECT * FROM chatapp.users WHERE users.username like '$user' and users.passwd like '$passwd'";
-        $query = "SELECT users.passwd FROM chatapp.users WHERE users.username LIKE '$user'";
-        $result = $bd->query($query);
-        $result = $result->fetch();
-        
-        if($result->rowCount() > 0){
-            if(password_verify($passwd, strval($result))){header('Location: index.html');}
+        $query = $bd->query("SELECT users.username FROM chatapp.users WHERE users.username LIKE '$user'");
+        $userExists = $query->fetch();
+        // var_dump($userExists);
+
+        if($userExists){
+            $query = "SELECT users.passwd FROM chatapp.users WHERE users.username LIKE '$user'";
+            $result = $bd->query($query);
+            // $result = $result->fetch(); 
+            // var_dump($result);
+            // echo '<br/>';
+            // var_dump(strval($result[0]));
+            
+            if($result->rowCount() > 0){
+                // if($result->rowCount() > 0 && password_verify($passwd, strval($result))){
+                $result = $result->fetch();
+                if($user === 'root'){
+                    if($passwd == strval($result[0])){return TRUE;}
+                    else {return FALSE;}
+                } else {
+                    if(password_verify($passwd, strval($result[0]))){
+                        return TRUE;
+                    } else {
+                        // echo '<p style="color:red">**ERROR: Check user or password!</p>';
+                        return FALSE;
+                    }
+                }
+            }
         } else {
             return FALSE;
         }
+
+        // if($resul->rowCount() === 1){		
+        //     return $resul->fetch();		
+        // }else{
+        //     return FALSE;
+        // }
+    }
+
+    // function isActive($user, $bool ,$bd){
+    //     $query = "UPDATE chatapp.users SET 'users.isActive' = '$bool' WHERE users.username LIKE '$user'";
+    //     $bd->query($query);
+    // }
+
+    function send_message($message, $senderID, $bd){
+        // $query = "INSERT INTO chatapp.messages (id, senderID, receiverID, content, msgTime, isRead) VALUES (NULL, '', '', '$message', '', '');";
+        $query = "INSERT INTO chatapp.messages (id, senderID, receiverID, content, msgTime, isRead) VALUES (NULL, '$senderID', '1', '$message', '', '');";
+        return $bd->query($query);
     }
 
     function send_passwd_recovery_email($recovery_email = null, $url){

@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
   id int(10) NOT NULL AUTO_INCREMENT,
   usName varchar(30) NOT NULL,
   usSurname varchar(30) NOT NULL,
-  username varchar(30) NOT NULL,
+  username varchar(30) NOT NULL UNIQUE,
   email varchar(30) NOT NULL UNIQUE,
   age int NOT NULL,
   telephone varchar(16) NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS messages (
   id int(10) NOT NULL AUTO_INCREMENT,
   senderID int(10) NOT NULL,
   receiverID int(10) NOT NULL,
-  content varchar(1000) NOT NULL,
+  content varchar(10000) NOT NULL,
   msgTime datetime NOT NULL,
   isRead boolean NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
@@ -45,4 +45,4 @@ CREATE TABLE IF NOT EXISTS participate_users_chats(
     FOREIGN KEY (receiverID) REFERENCES users(id)
 );
 
-INSERT INTO `users` (`id`, `usName`, `usSurname`, `username`, `email`, `passwd`, `isActive`) VALUES (NULL, 'root', 'root', 'root', 'root', '', '0');
+INSERT INTO `users` (`id`, `usName`, `usSurname`, `username`, `email`, `passwd`, `isActive`) VALUES (NULL, 'root', 'root', 'root', 'root', 'root', '0');

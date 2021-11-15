@@ -1,16 +1,18 @@
 <?php
     require_once 'utilities.php';
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {  
     
-        $usu = check_user_login($_POST['user-login'], password_hash($_POST['passwd-login'], PASSWORD_DEFAULT), $bd);
+        $usu = check_user_login($_POST['user-login'], $_POST['passwd-login'], $bd);
         if($usu === FALSE){
-            $err = TRUE;
+            // $err = TRUE;
+            echo '<p style="color:red">**ERROR: Check user or password!</p>';
             $user = $_POST['user-login'];
         }else{
             session_start();
-            $_SESSION['user-login'] = $us;
-            header("Location: index.html");
-            return;
+            $_SESSION['user-login'] = $user;
+            // isActive($user, 1, $bd);
+            header("Location: chat.php");
         }	
     }
 ?>
@@ -37,10 +39,10 @@
             <fieldset>
                 <legend>Login</legend>
                 <label for="user-login">User</label>
-                <input type="text" id="user-login" value="<?php if(isset($user))echo $user;?>" name="user-login" placeholder="Username" /><br/>
+                <input type="text" id="user-login" value="<?php if(isset($user))echo $user;?>" name="user-login" placeholder="Username" required autofocus/><br/>
 
                 <label for="passwd-login">Password</label>
-                <input type="password" id="passwd-login" value = "<?php if(isset($passwd))echo $passwd;?>" name="passwd-login" placeholder="Password"><br/>
+                <input type="password" id="passwd-login" value = "<?php if(isset($passwd))echo $passwd;?>" name="passwd-login" placeholder="Password" required><br/>
                 <a href="passwd_recovery.php">Forgot your password?</a><br/><br/>
                 <!-- <a href="passwd_recovery.php">Forgot your password?</a><br/><br/> -->
 

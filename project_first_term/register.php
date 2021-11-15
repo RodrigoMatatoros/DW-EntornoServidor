@@ -4,27 +4,33 @@
     if($_SERVER["REQUEST_METHOD"] == 'POST'){
         $user = check_user_registration($_POST['user-register'], $_POST['email-register'], $bd);
         if($user === TRUE){
-            $err = TRUE;
-            // $user = $_POST['user'];
+            // $err = TRUE;
             echo '<p style="color:red">**ERROR: the username or the email is already registered.</p>';
-            return;
+            $user = $_POST['user'];
         } else {
             $name = $_POST['name-register'];
             $surname = $_POST['surname-register'];
             $user = $_POST['user-register'];
             $email = $_POST['email-register'];
-            $passwd = password_hash($_POST['passwd-register'], PASSWORD_DEFAULT);
-            //make the password confirmation
+            $passwd = $_POST['passwd-register'];
+            $passwdConf = $_POST['passwd-conf-register'];
             $age = intval($_POST['age-register']);
             $tel = $_POST['tel-register'];
 
-        var_dump($result);
-            register_user($name, $surname, $user, $email, $passwd, $age, $tel, $bd);
-            
-            session_start();
-            $_SESSION['user'] = $us;
-            header('Location: index.html');
-            return;
+            // var_dump($passwd);
+            // var_dump($passwdConf);
+
+            if($passwd == $passwdConf){
+                $encryptedPasswd = password_hash($passwd, PASSWORD_DEFAULT);
+                register_user($name, $surname, $user, $email, $encryptedPasswd, $age, $tel, $bd);
+                
+                session_start();
+                $_SESSION['user-register'] = $user;
+                // isActive($user, 1, $bd);
+                header('Location: chat.php');
+            } else {
+                echo '<p style="color:red">**ERROR: passwords do not match!</p>';
+            }
         }
     }
 ?>
@@ -51,7 +57,7 @@
             <fieldset>
                 <legend>Registration</legend>
                 <label for="name-register">Name*</label>
-                <input type="text" id="name-register" value = "<?php if(isset($name))echo $name;?>" name="name-register" placeholder="Name" required /><br/>
+                <input type="text" id="name-register" value = "<?php if(isset($name))echo $name;?>" name="name-register" placeholder="Name" required autofocus/><br/>
 
                 <label for="surname-register">Surname(s)*</label>
                 <input type="text" id="surname-register" value = "<?php if(isset($surname))echo $surname;?>" name="surname-register" placeholder="Surname" required /><br/>
@@ -66,6 +72,8 @@
                 <input type="password" id="passwd-register" value = "<?php if(isset($passwd))echo $passwd;?>" name="passwd-register" placeholder="Password" required /><br/>
 
                 <!--make a password confirmation here-->
+                <label for="passwd-conf-register">Confirm Password*</label>
+                <input type="password" id="passwd-conf-register" value = "<?php if(isset($passwdConf))echo $passwdConf;?>" name="passwd-conf-register" placeholder="Password Confirmation" required /><br/>
 
                 <label for="age-register">Age*</label>
                 <input type="number" min=16 max=99 id="age-register" value="<?php if(isset($age))echo $age;?>" name="age-register" /><br/>

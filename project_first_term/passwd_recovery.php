@@ -12,7 +12,7 @@
             <fieldset>
                 <legend>Password Recovery</legend>
                 <label for="email-passwd-recover">Email for the recovery*</label>
-                <input type="email" id="email-passwd-recovery" name="email-passwd-recovery" /><br/>
+                <input type="email" id="email-passwd-recovery" name="email-passwd-recovery" required autofocus/><br/>
 
                 <button type="submit">Send</button>
                 <button type="reset">Cancel</button>

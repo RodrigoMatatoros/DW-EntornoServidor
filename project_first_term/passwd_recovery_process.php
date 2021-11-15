@@ -12,7 +12,7 @@
             <fieldset>
                 <legend>Password Recovery</legend>
                 <label for="user-recover">User*</label>
-                <input type="text" id="user-recover" name="user-recover" value="<?php if(isset($recovery_email))echo $recovery_email;?>" required /><br/>
+                <input type="text" id="user-recover" name="user-recover" value="<?php if(isset($recovery_email))echo $recovery_email;?>" required autofocus/><br/>
 
                 <label for="new-passwd">New Password*</label>
                 <input type="password" id="new-passwd" name="new-passwd" value="<?php if(isset($recovery_email))echo $recovery_email;?>" required /><br/>
