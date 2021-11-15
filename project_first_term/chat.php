@@ -12,60 +12,6 @@
         // var_dump(intval($id[0]));
 
         $message = send_message($_POST['message'], intval($id[0]), $bd);
-        if($message){
-            $msgContent = $_POST['message'];
-
-            # NONE OF THEM ACCUMULATES THE MESSAGES IN THE INTERFACE
-
-            /* THIS WORKS:
-            echo "
-                <script>
-                    var chatContainer = document.getElementById('chat');
-                    console.log(chatContainer);
-                    var newMessage = `
-                        <div class='message-sent'>
-                            <p>$msgContent</p>
-                            <div class='message-timestamp-right'>SMS 15:07</div>
-                        </div>
-                    `;
-                    // document.body.appendChild(newMessage);
-                    document.body.innerHTML = newMessage;
-                </script>
-            ";
-            */
-            
-            /*THIS ALSO WORKS
-            echo "
-                <script>
-                    var chatContainer = document.getElementById('chat');
-                    console.log(chatContainer);
-                    var newMessage = document.createElement('div');
-                    newMessage.setAttribute('class', 'message-sent');
-                    newMessage.innerHTML = `
-                        <p>$msgContent</p>
-                        <div class='message-timestamp-right'>SMS 15:07</div>
-                    `;
-                    document.body.appendChild(newMessage);
-                </script>
-            ";
-            */
-
-            echo "
-                <script>
-                    var chatContainer = document.getElementById('chat');
-                    console.log(chatContainer);
-                    var newMessage = document.createElement('div');
-                    newMessage.setAttribute('class', 'message-sent');
-                    newMessage.innerHTML = `
-                        <p>$msgContent</p>
-                        <div class='message-timestamp-right'>SMS 15:07</div>
-                    `;
-                    document.body.appendChild(newMessage);
-                </script>
-            ";
-        } else {
-            echo '<p style=color:red>**ERROR: Something went wrong and the message could not be sent.</p>';
-        }
     }
 ?>
 
