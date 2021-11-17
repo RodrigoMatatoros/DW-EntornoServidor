@@ -27,12 +27,19 @@
 
             if($passwd == $passwdConf){
                 $encryptedPasswd = password_hash($passwd, PASSWORD_DEFAULT);
-                register_user($name, $surname, $user, $email, $encryptedPasswd, $age, $tel, $bd);
-                
                 session_start();
                 $_SESSION['user-register'] = $user;
+                register_user($name, $surname, $user, $email,$encryptedPasswd, $age, $tel, $bd);
                 // isActive($user, 1, $bd);
                 header('Location: chat.php');
+                
+                // $url = 'verification.php';
+                #######Future: verification email
+                // if(send_verification_email($email, $verifCode)){
+                //    header('Location: verification.php');
+                // } else {
+                //     echo '<p style=color:red>An error ocurred. Check your email';
+                // }
             } else {
                 echo '<p style="color:red">**ERROR: passwords do not match!</p>';
             }

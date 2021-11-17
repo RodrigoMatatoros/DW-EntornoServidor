@@ -6,13 +6,18 @@
         $usu = check_user_login($_POST['user-login'], $_POST['passwd-login'], $bd);
         if($usu === FALSE){
             // $err = TRUE;
-            echo '<p style="color:red">**ERROR: Check user or password!</p>';
+            echo '<p style="color:red">**ERROR: Incorrect data or user not registered!</p>';
             $user = $_POST['user-login'];
         }else{
-            session_start();
+            // session_start();
+            $username = $_POST['user-login'];
+            $id = $bd->query("SELECT users.id FROM chatapp.users WHERE users.username LIKE '$username'");
+            $userID = intval($id->fetch());
+            $_SESSION['user-id'] = $userID;
+            // var_dump($userID);
             $_SESSION['user-login'] = $user;
             // isActive($user, 1, $bd);
-            if($user == 'root'){
+            if($username == 'root'){
                 header('Location: admin.php');
             } else {
                 header("Location: chat.php");

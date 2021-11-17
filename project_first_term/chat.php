@@ -1,17 +1,18 @@
 <?php
     require_once 'utilities.php';
     // include 'chatbox.php';
-    // session_start();
+    session_start();
     // $username = $_SESSION['user-register'];
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // $query = $bd->query("SELECT users.id FROM chatapp.users WHERE users.username LIKE '$user'");
-        $query = $bd->query("SELECT users.id FROM chatapp.users WHERE users.username LIKE 'alfreeznx'");
-        echo '<br/>'; //don't really know why but without it the messages aren't printed
-        $id = $query->fetch();
+        // $query = $bd->query("SELECT users.id FROM chatapp.users WHERE users.username LIKE '$user'");
+        // echo '<br/>'; //don't really know why but without it the messages aren't printed
+        // $id = $query->fetch();
         // var_dump(intval($id[0]));
 
-        $message = send_message($_POST['message'], intval($id[0]), $bd);
+        // $message = send_message($_POST['message'], intval($id['id']), $bd);
+        $message = send_message($_POST['message'], intval($_SESSION['user-id']), $bd);
     }
 ?>
 
@@ -26,6 +27,7 @@
         <title>ChatApp</title>
     </head>
     <body>
+        <a href="logout.php">Logout</a>
         <div class="main-container">
             <div class="sidebar">
                 <div class="profile">Profile</div>

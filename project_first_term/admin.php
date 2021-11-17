@@ -2,7 +2,8 @@
     require_once 'utilities.php';
 
     session_start();
-    if(!isset($_SESSION['codUser']) || $_SESSION['codUser'] != 1){
+    // var_dump($_SESSION['user-id']);
+    if(!isset($_SESSION['user-id']) || $_SESSION['user-id'] != 1){
         header('Location: logout.php');
     }
 
@@ -23,21 +24,21 @@
     </header>
 
     <body>
+        <a href="logout.php">Logout</a>
         <div class="users">
             <div class="user"></div>
-            <button name="del-user"></button>
+            <button name="del-user">Delete user</button>
         </div>
         <div class="messages">
             <div class="messaage"></div>
-            <button name="del-msg"></button>
+            <button name="del-msg">Delete message</button>
         </div>
         <div class="chats">
             <div class="chat"></div>
-            <button name="del-chat"></button>
+            <button name="del-chat">Delete chat</button>
         </div>
 
-        <?php include 'register.php' ?>
-
-        <button type="submit"></button>
+        <br/>
+        <button type="submit">Add user</button>
     </body>
 </html>

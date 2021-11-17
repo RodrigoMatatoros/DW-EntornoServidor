@@ -1,7 +1,7 @@
 <?php
     use PHPMailer\PHPMailer\PHPMailer;
     require "../vendor/autoload.php";
-    
+
 		try {
 			$connection_data = configBD("conf.xml");
 			$bd = new PDO($connection_data[0], $connection_data[1], $connection_data[2]);
@@ -55,7 +55,7 @@
     }
 
     function register_user($name, $surname, $username, $email, $passwd, $age, $tel, $bd){
-        $query = "INSERT INTO chatapp.users (id, usName, usSurname, username, email, passwd, age, isActive) VALUES (NULL, '$name', '$surname', '$username', '$email', '$passwd', '$age', '0');";
+        $query = "INSERT INTO chatapp.users (id, usName, usSurname, username, email, passwd, age, telephone, isActive) VALUES (NULL, '$name', '$surname', '$username', '$email', '$passwd', '$age', '$tel', '0');";
         $result = $bd->query($query);
         //insert confirmation
         if($result->rowCount() > 0){
@@ -67,7 +67,7 @@
     }
 
     function check_user_login($user, $passwd, $bd){
-        $userExists = $bd->query("SELECT users.username FROM chatapp.users WHERE users.username LIKE '$user'");
+        $userExists = $bd->query("SELECT users.username, users.id FROM chatapp.users WHERE users.username LIKE '$user'");
         // $userExists = $query->fetch();
         // var_dump($userExists);
         
@@ -110,7 +110,24 @@
     //     $bd->query($query);
     // }
 
-    function send_message($message, $senderID, $bd){
+    #to fix
+    function verifCode(){
+        $code = rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
+        return $code;
+    }
+    $auxCode = verifCode();
+    $verifCode = $auxCode . "";
+    
+    #to fix
+    function verification($code, $verifCode){
+        if($code == $verifCode){
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    function send_message($message, $senderID,/* $chatID,*/ $bd){
         // $query = "INSERT INTO chatapp.messages (id, senderID, receiverID, content, msgTime, isRead) VALUES (NULL, '', '', '$message', '', '');";
         $query = "INSERT INTO chatapp.messages (id, senderID, receiverID, content, msgTime, isRead) VALUES (NULL, '$senderID', '1', '$message', '', '');";
         $result = $bd->query($query);
@@ -187,10 +204,45 @@
         
         if($recovery_email){
             if(!$result) {
-                echo "Error" . $mail->ErrorInfo;
+                echo "<p style=color:red>Error" . $mail->ErrorInfo . '</p>';
             } else {
                 echo "An email with instructions has been sent to: <b>" . $recovery_email.'</b>';
                 $recovery_email = null;
             }
+        }
+    }
+
+    #to fix
+    function send_verification_email($verif_email = null, $verifCode/*, $url*/){
+        //remember to change the email of the app
+        try{
+            $mail = new PHPMailer();
+            $mail->IsSMTP();
+            // comment the line below to hide the server messages after sending an email.
+            // $mail->SMTPDebug  = 2;				
+            $mail->SMTPAuth   = true;
+            $mail->SMTPSecure = "tls";                 
+            $mail->Host       = "smtp.gmail.com";    
+            $mail->Port       = 587;
+            // --
+            $mail->Username   = "talesdemiletoxd@gmail.com"; 
+            $mail->Password   = "12345tales";   	
+            // --
+            $mail->SetFrom('talesdemiletoxd@gmail.com');
+            $mail->Subject    = 'VERIFICATION';
+            $mail->MsgHTML(
+                'Here is the last step to complete your registration.<br/>
+                You must enter the following code in the verification form: '
+                 . '<br/> - <b>' . $verifCode . '</b>'
+                //check this
+                //  . '<br/> - http://localhost/project_first_term/'.$url
+                 . '<br/><br/>Thank you for joining our family!'
+            );
+            // $mail->addAttachment($_FILES['file-send']);
+            $mail->AddAddress($verif_email);
+            $result = $mail->Send();
+            return $result;
+        } catch (Exception $e){
+            return FALSE;
         }
     }
