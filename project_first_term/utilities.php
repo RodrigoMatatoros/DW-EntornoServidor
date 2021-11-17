@@ -37,10 +37,14 @@
         $bd->query($query);
         $result = $bd->query($query);
         // var_dump($result);
-        // $result = $bd->fetch();
-        // var_dump($result);
+        $result = $result->fetch();
+        // $result->fetch();
 
-        return $result->fetch();
+        if($result['username'] == $user || $result['email'] == $email){
+            return TRUE;
+        } else {
+            return FALSE;
+        }
 
         // if($result->rowCount() === 1){
         //     echo '<p style="color:lightgreen">**SUCCESS: Registration complete!</p>';			
@@ -63,11 +67,11 @@
     }
 
     function check_user_login($user, $passwd, $bd){
-        $query = $bd->query("SELECT users.username FROM chatapp.users WHERE users.username LIKE '$user'");
-        $userExists = $query->fetch();
+        $userExists = $bd->query("SELECT users.username FROM chatapp.users WHERE users.username LIKE '$user'");
+        // $userExists = $query->fetch();
         // var_dump($userExists);
-
-        if($userExists){
+        
+        if($userExists->rowCount() > 0){
             $query = "SELECT users.passwd FROM chatapp.users WHERE users.username LIKE '$user'";
             $result = $bd->query($query);
             // $result = $result->fetch(); 
@@ -79,10 +83,10 @@
                 // if($result->rowCount() > 0 && password_verify($passwd, strval($result))){
                 $result = $result->fetch();
                 if($user === 'root'){
-                    if($passwd == strval($result[0])){return TRUE;}
+                    if($passwd == strval($result['passwd'])){return TRUE;}
                     else {return FALSE;}
                 } else {
-                    if(password_verify($passwd, strval($result[0]))){
+                    if(password_verify($passwd, strval($result['passwd']))){
                         return TRUE;
                     } else {
                         // echo '<p style="color:red">**ERROR: Check user or password!</p>';

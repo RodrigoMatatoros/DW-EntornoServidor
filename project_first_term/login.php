@@ -12,7 +12,11 @@
             session_start();
             $_SESSION['user-login'] = $user;
             // isActive($user, 1, $bd);
-            header("Location: chat.php");
+            if($user == 'root'){
+                header('Location: admin.php');
+            } else {
+                header("Location: chat.php");
+            }
         }	
     }
 ?>

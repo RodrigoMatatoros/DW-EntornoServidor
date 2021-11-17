@@ -6,7 +6,12 @@
         if($user === TRUE){
             // $err = TRUE;
             echo '<p style="color:red">**ERROR: the username or the email is already registered.</p>';
-            $user = $_POST['user'];
+            // $user = $_POST['user-register'];
+            $name = $_POST['name-register'];
+            $surname = $_POST['surname-register'];
+            $user = '';
+            $age = intval($_POST['age-register']);
+            $tel = $_POST['tel-register'];
         } else {
             $name = $_POST['name-register'];
             $surname = $_POST['surname-register'];
@@ -76,10 +81,10 @@
                 <input type="password" id="passwd-conf-register" value = "<?php if(isset($passwdConf))echo $passwdConf;?>" name="passwd-conf-register" placeholder="Password Confirmation" required /><br/>
 
                 <label for="age-register">Age*</label>
-                <input type="number" min=16 max=99 id="age-register" value="<?php if(isset($age))echo $age;?>" name="age-register" /><br/>
+                <input type="number" min=16 max=99 id="age-register" value="<?php if(isset($age))echo $age;?>" name="age-register" placeholder="Age" /><br/>
 
                 <label for="tel-register">Telephone number</label>
-                <input type="tel" id="tel-register" value="<?php if(isset($phone_number))echo $phone_number;?>" name="tel-register" /><br/><br/>
+                <input type="tel" id="tel-register" value="<?php if(isset($phone_number))echo $phone_number;?>" name="tel-register" placeholder="Phone number" /><br/><br/>
 
                 <button type="submit">Register</button>
                 <button type="reset">Cancel</button><br/>
