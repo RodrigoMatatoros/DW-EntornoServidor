@@ -13,6 +13,7 @@
 
         // $message = send_message($_POST['message'], intval($id['id']), $bd);
         $message = send_message($_POST['message'], intval($_SESSION['user-id']), $bd);
+        if(!$message){echo '<p style=color:red>**ERROR: Something went wrong and the message could not be sent.</p>';}
     }
 ?>
 
@@ -37,20 +38,48 @@
                 <div class="contact-info">Contact Info</div>
                 <div class="chat"  id="chat">
                     <div class="message-received">
-                            <p class="message-content">This is an awesome message!</p>
-                            <div class="message-timestamp-left">SMS 13:37</div>
-                        </div>
-        
-                        <div class="message-sent">
-                            <p class="message-content">I agree that your message is awesome!</p>
-                            <div class="message-timestamp-right">SMS 13:37</div>
-                        </div>
-
-                        <div class="message-received">
-                            <p class="message-content">Thanks!</p>
-                            <div class="message-timestamp-left">SMS 13:37</div>
-                        </div>
+                        <p class="message-content">This is an awesome message!</p>
+                        <div class="message-timestamp-left">SMS 13:37</div>
                     </div>
+        
+                    <div class="message-sent">
+                        <p class="message-content">I agree that your message is awesome!</p>
+                        <div class="message-timestamp-right">SMS 13:37</div>
+                    </div>
+
+                    <div class="message-received">
+                        <p class="message-content">Thanks!</p>
+                        <div class="message-timestamp-left">SMS 13:37</div>
+                    </div>
+
+                    <?php
+                        $messages = get_messages(intval($_SESSION['user-id']), $bd);
+                        var_dump($messages);
+                        if($messages['senderID'] == intval($_SESSION['user-id'])){
+                            $containerClass = 'class="message-sent"';
+                            $timestampClass = 'class="message-timestamp-right"';
+                        } else{
+                            $containerClass = 'class="message-received"';
+                            $timestampClass = 'class="message-timestamp-left"';
+                        }
+
+                        foreach($messages as $msg){
+                            if($messages['senderID'] == intval($_SESSION['user-id'])){
+                                $containerClass = 'class="message-sent"';
+                                $timestampClass = 'class="message-timestamp-right"';
+                            } else{
+                                $containerClass = 'class="message-received"';
+                                $timestampClass = 'class="message-timestamp-left"';
+                            }
+                            
+                            echo '
+                                <div ' . $containerClass .'>
+                                    <p>' . $msg['content'] . '</p>
+                                    <div ' . $timestampClass . '>' . $msg['msgTime'] . '</div>
+                                </div>
+                            ';
+                        }
+                    ?>
                 </div>
                 <div class="send-message">
                     <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'])?>" method="POST">

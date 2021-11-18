@@ -9,7 +9,7 @@
             echo '<p style="color:red">**ERROR: Incorrect data or user not registered!</p>';
             $user = $_POST['user-login'];
         }else{
-            // session_start();
+            session_start();
             $username = $_POST['user-login'];
             $id = $bd->query("SELECT users.id FROM chatapp.users WHERE users.username LIKE '$username'");
             $userID = intval($id->fetch());

@@ -1,5 +1,5 @@
 <?php
-session_start();
+// session_start();
 // Include functions and connect to the database using PDO MySQL
 //Change file config.php if needed, for the MySQL conection
 // include 'utilities.php'; ******************************

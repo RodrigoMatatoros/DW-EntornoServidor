@@ -8,17 +8,16 @@ div{border: 1px solid black;}
     display: flex;
     flex-direction: row;
     width: 80%;
-    height: 100%;
 }
 
 .sidebar{width: 30%;}
 .current-chat{width: 70%;}
 
 .profile{height: 5em; background-color: red;}
-.chats{height: 33em; background-color: yellow;}
+.chats{background-color: yellow;}
 
 .contact-info{height: 5em; background-color: cyan;}
-.chat{height: 30em; background-color: greenyellow;}
+.chat{background-color: greenyellow;}
 
 .current-chat{
     display: flex;
@@ -28,7 +27,6 @@ div{border: 1px solid black;}
 
 .send-message form{
     display: flex;
-    height: 2em;
     background-color: black;
 }
 /* .message-box, .message-box input{flex-grow: 2; border-radius: 5px;} */
