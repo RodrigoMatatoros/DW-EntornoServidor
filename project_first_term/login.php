@@ -20,7 +20,7 @@
             if($username == 'root'){
                 header('Location: admin.php');
             } else {
-                header("Location: chat.php");
+                header("Location: current_chat.php");
             }
         }	
     }

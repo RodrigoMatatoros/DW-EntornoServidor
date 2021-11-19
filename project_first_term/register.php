@@ -31,7 +31,7 @@
                 $_SESSION['user-register'] = $user;
                 register_user($name, $surname, $user, $email,$encryptedPasswd, $age, $tel, $bd);
                 // isActive($user, 1, $bd);
-                header('Location: chat.php');
+                header('Location: current_chat.php');
                 
                 // $url = 'verification.php';
                 #######Future: verification email

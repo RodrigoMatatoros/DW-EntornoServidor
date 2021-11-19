@@ -127,9 +127,9 @@
         }
     }
 
-    function send_message($message, $senderID,/* $chatID,*/ $bd){
+    function send_message($message, $senderID,/* $chatID,*/ $timestamp, $bd){
         // $query = "INSERT INTO chatapp.messages (id, senderID, receiverID, content, msgTime, isRead) VALUES (NULL, '', '', '$message', '', '');";
-        $query = "INSERT INTO chatapp.messages (id, senderID, receiverID, content, msgTime, isRead) VALUES (NULL, '$senderID', '1', '$message', 'curdate()', '');";
+        $query = "INSERT INTO chatapp.messages (id, senderID, receiverID, content, msgTime, isRead) VALUES (NULL, '$senderID', '1', '$message', '$timestamp', '');";
         $result = $bd->query($query);
         
         return $result;

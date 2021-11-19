@@ -17,7 +17,7 @@ div{border: 1px solid black;}
 .chats{background-color: yellow;}
 
 .contact-info{height: 5em; background-color: cyan;}
-.chat{background-color: greenyellow;}
+.chat{height: 35em; overflow: scroll; background-color: greenyellow;}
 
 .current-chat{
     display: flex;
@@ -27,6 +27,7 @@ div{border: 1px solid black;}
 
 .send-message form{
     display: flex;
+    height: 5em;
     background-color: black;
 }
 /* .message-box, .message-box input{flex-grow: 2; border-radius: 5px;} */
