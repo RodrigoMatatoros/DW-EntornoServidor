@@ -127,82 +127,35 @@
         }
     }
 
-    function send_message($message, $senderID,/* $chatID,*/ $timestamp, $bd){
+    function send_message($message, $senderID, /*chatID,*/$timestamp, $bd){
+        if($message == ''){return TRUE;} //in this way, blank messages won't be sent 
         // $query = "INSERT INTO chatapp.messages (id, senderID, receiverID, content, msgTime, isRead) VALUES (NULL, '', '', '$message', '', '');";
-        $query = "INSERT INTO chatapp.messages (id, senderID, receiverID, content, msgTime, isRead) VALUES (NULL, '$senderID', '1', '$message', '$timestamp', '');";
+        $query = "INSERT INTO chatapp.messages (id, senderID, chatID, content, msgTime, isRead) VALUES (NULL, '$senderID', '1', '$message', '$timestamp', '');";
         $result = $bd->query($query);
         
         return $result;
     }
 
-    function get_messages($senderID, $bd){
-        // $query = "SELECT id FROM messages";
-        // $result = $bd->query($query);
-        // $result = $result->fetch();
-        // $idMessage = $result;
-        # foreach para cada id de mensaje
-        //more parameters when having the receiverID and the chatID
-        $query = "SELECT * FROM chatapp.messages WHERE messages.senderID LIKE '$senderID'";
+    function get_messages(/*$senderID,*/$bd){
+        // $query = "SELECT * FROM chatapp.messages WHERE messages.chatID LIKE '$chatID'";
+        $query = "SELECT * FROM chatapp.messages WHERE messages.chatID LIKE 1";
         $result = $bd->query($query);
         $result = $result->fetchAll();
         // var_dump($result);
 
         return $result;
+    }
 
-        // echo "
-        //     <script>
-        //         function start(){
-        //             var chatContainer = document.getElementById('chat');
-        //             console.log(chatContainer);
-        //             // for(let i = 0; i < '$result'.length; i++){
-        //                 var message = createNode('div', chatContainer, '', 'message-sent', '')
-        //                 var messagContent = createNode('p', message, '', '', '$result[3]');
-        //                 var timeStamp = createNode('div', message, '', 'message-timestamp-right', 'SMS 15:07');                                
-        //             // }
-        //         }
+    function get_chats($userID, $bd){
+        $query = "SELECT * FROM chatapp.chats
+                INNER JOIN chatapp.participate_user_chats ON chats.id = participate_users_chats.chatID
+                INNER JOIN chatapp.users ON users.id = participate_users_chats.userID
+                WHERE users.id LIKE '$userID'";
+        
+        $result = $bd->query($query);
+        $result = $result->fetchAll();
 
-        //         function createNode(type, parent, id, _class, inner) {
-        //             var node = document.createElement(type);
-        //             if(id != ''){node.id = id;}
-        //             if(_class != ''){node.className = _class;}
-        //             if(inner != ''){node.innerHTML = inner;}
-        //             parent.appendChild(node);
-        //             return node;
-        //         }
-                
-        //         window.onload = start;
-        //     </script>
-        // ";
-
-        ########another way to try sending messages
-        // echo `<?php
-        //     if($message){
-        //         $messages = get_messages(intval($_SESSION['user-id']), $bd);
-        //         foreach($messages as $msg) :
-        //     ? >
-        //         <div
-        //             <?php
-        //                 if($message['senderID'] == intval($_SESSION['user-id'])){
-        //                     echo htmlspecialchars('class="message-sent"');
-        //                 } else{
-        //                     echo htmlspecialchars('class="message-received"');
-        //                 }
-        //             ? >>
-        //             <p class="message-content"><?= $msg['content'] ? ></p>
-        //             <div
-        //                 <?php
-        //                     if($message['senderID'] == intval($_SESSION['user-id'])){
-        //                         echo htmlspecialchars('class="message-timestamp-right"');
-        //                     } else {
-        //                         echo htmlspecialchars('class="mesage-timestamp-left"');
-        //                     }
-        //                 ? >>
-        //             <?= $msg['msgTime'] ? ></div>
-        //         </div>
-        //     < ?php
-        //             endforeach;
-        //         }
-        //     ? >`;
+        return $result;
     }
 
     function send_passwd_recovery_email($recovery_email = null, $url){

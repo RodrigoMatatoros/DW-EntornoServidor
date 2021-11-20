@@ -12,10 +12,11 @@
             session_start();
             $username = $_POST['user-login'];
             $id = $bd->query("SELECT users.id FROM chatapp.users WHERE users.username LIKE '$username'");
-            $userID = intval($id->fetch());
-            $_SESSION['user-id'] = $userID;
+            $userID = $id->fetch();
             // var_dump($userID);
-            $_SESSION['user-login'] = $user;
+            $_SESSION['user-id'] = intval($userID['id']);
+            // var_dump($userID);
+            // $_SESSION['user-login'] = $user;
             // isActive($user, 1, $bd);
             if($username == 'root'){
                 header('Location: admin.php');

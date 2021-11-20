@@ -28,6 +28,7 @@
             if($passwd == $passwdConf){
                 $encryptedPasswd = password_hash($passwd, PASSWORD_DEFAULT);
                 session_start();
+                $_SESSION['user-id'] = $userID; //check this
                 $_SESSION['user-register'] = $user;
                 register_user($name, $surname, $user, $email,$encryptedPasswd, $age, $tel, $bd);
                 // isActive($user, 1, $bd);

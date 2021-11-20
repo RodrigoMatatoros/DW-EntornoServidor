@@ -1,8 +1,7 @@
 <?php
     require_once 'utilities.php';
-    // include 'chatbox.php';
     session_start();
-    // $username = $_SESSION['user-register'];
+    $userID = $_SESSION['user-id'];
 ?>
 
 <!DOCTYPE html>
@@ -20,7 +19,8 @@
         <div class="main-container">
             <div class="sidebar">
                 <div class="profile">Profile</div>
-                <div class="chats">Chats</div>
+                <div class="chats">
+                </div>
             </div>
             <div class="current-chat">
                 <div class="contact-info">Contact Info</div>
@@ -43,16 +43,17 @@
                     </div>
                     -->
                     <?php
+                        var_dump($userID);
                         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['message'])) {
                             $date = date('Y-m-d H:i:s');
-                            $message = send_message($_POST['message'], intval($_SESSION['user-id']), /* chatID,*/ $date, $bd);
+                            $message = send_message($_POST['message'], $userID, /*chatID,*/$date, $bd);
                             if(!$message){
                                 echo '<p style=color:red>**ERROR: Something went wrong and the message could not be sent.</p>';
                             } else {
-                                $messages = get_messages(intval($_SESSION['user-id']), $bd);
+                                $messages = get_messages(/*intval($userID),*/ /*chatID,*/$bd);
                                 // var_dump($messages);
                                 foreach($messages as $msg){
-                                    if($msg['senderID'] == intval($_SESSION['user-id'])){
+                                    if($msg['senderID'] == intval($userID)){
                                         $containerClass = 'class="message-sent"';
                                         $timestampClass = 'class="message-timestamp-right"';
                                     } else{
@@ -77,9 +78,9 @@
                             <!-- <input type="text" id="message-box" name="message" placeholder="Escribe un mensaje..." autofocus> -->
                             <textarea rows="10" cols="50" name="message" placeholder="Escribe un mensaje..." autofocus></textarea>
                         </div>
-                        <div class="send-message-button">
+                        <div class="send-message-button" id="send-msg">
                             <button type="submit">Send</button>
-                        </div>
+                            <!-- look how to make the chat div scroll down automatically -->
                     </form>
                 </div>
             </div>
