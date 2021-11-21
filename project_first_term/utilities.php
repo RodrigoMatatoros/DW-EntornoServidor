@@ -158,6 +158,28 @@
         return $result;
     }
 
+    function create_chat_get_id($alias, $bd){
+        $query = "INSERT INTO `chats`(`alias`) VALUES ('$alias')";
+        $result = $bd->query($query);
+
+        $query = "SELECT chats.id FROM chatapp.chats WHERE chats.alias LIKE '$alias' ORDER BY chats.id DESC LIMIT 1";
+        $result = $bd->query($query);
+        $id = $result->fetch();
+        return $id;
+    }
+
+    function add_participants_chat($participant, $chatID, $bd){
+        $query = "INSERT INTO `participate_users_chats`(`userID`, `chatID`) VALUES ('$participant','$chatID')";
+        $result = $bd->query($query);
+
+        $count = $result->rowCount();
+        if ($count > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function send_passwd_recovery_email($recovery_email = null, $url){
         //remember to change the email of the app
         try{

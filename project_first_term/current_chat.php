@@ -11,6 +11,10 @@
     $telephone = $_SESSION['user-telephone'];
     $pfp = $_SESSION['user-pfp'];
     // var_dump($pfp);
+
+    $query = "SELECT * FROM chatapp.users WHERE users.username NOT LIKE '$user'";
+    $result = $bd->query($query);
+    $users = $result->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -36,7 +40,32 @@
                     </div>
                     <a class="edit-link" href="#">Edit</a> <!-- href="profile.php" -->
                 </div>
-                <div class="search-contacts">SEARCH CONTACTS</div>
+                <div class="search-contacts">
+                    <?php
+                        if($_SERVER['REQUEST_METHOD'] == "POST"){
+                            $alias = $_POST['chat-alias'];
+                            $chatID = create_chat_get_id($alias, $bd);
+
+                            add_participants_chat($userID, $chatID, $bd);
+                            foreach($_POST['contact-list'] as $participant){
+                                add_participants_chat($participant, $chatID, $bd);
+                            }
+                        }
+                    ?>
+                    <form action="" method="POST">
+                        <!-- <input type="text" list="contacts" name="contact-list" multiple placeholder="Search..."/> -->
+                        <input type="text" name="chat-alias" placeholder="Alias..."/>
+                        <select name="contact-list[]" multiple placeholder="Search...">
+                        <!-- <datalist id="contacts"> -->
+                        <?php foreach ($users as $user) : ?>
+                            <option value="<?= $user['id'] ?>"><?=$user['username']?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <!-- </datalist> -->
+                        <button type="submit">OK</button>
+                        <button type="reset">Cancel</button>
+                    </form>
+                </div>
                 <div class="chats">
                     <?php
                         $query = "SELECT * FROM chatapp.chats   

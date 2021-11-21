@@ -21,7 +21,7 @@ div{border: 1px solid black; border-radius: 3px;}
     background-color: red;
     display: flex;
 }
-.search-contacts{height: 2em; background-color: pink;}
+.search-contacts{height: 6em; background-color: pink;}
 .chats{background-color: yellow;}
 
 .contact-info{height: 5em; background-color: cyan;}
@@ -203,4 +203,20 @@ div{border: 1px solid black; border-radius: 3px;}
 
 .data-item{
     margin: 0;
+}
+
+/*----------------------SEARCH CONTACTS (aside)----------------------*/
+
+.search-contacts{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    padding: 3px;
+}
+
+.search-contacts form select{
+    border: 1px solid black;
+    border-radius: 3px;
+    background-color: pink;
+    width: 100%;
 }
