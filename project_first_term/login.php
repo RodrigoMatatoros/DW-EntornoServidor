@@ -11,13 +11,19 @@
         }else{
             session_start();
             $username = $_POST['user-login'];
-            $id = $bd->query("SELECT users.id FROM chatapp.users WHERE users.username LIKE '$username'");
-            $userID = $id->fetch();
+            $id = $bd->query("SELECT * FROM chatapp.users WHERE users.username LIKE '$username'");
+            $userData = $id->fetch();
+            // var_dump($userData);
             // var_dump($userID);
-            $_SESSION['user-id'] = intval($userID['id']);
-            // var_dump($userID);
-            // $_SESSION['user-login'] = $user;
-            // isActive($user, 1, $bd);
+            $_SESSION['user-id'] = $userData['id'];
+            $_SESSION['username'] = $userData['username'];
+            $_SESSION['user-name'] = $userData['usName'];
+            $_SESSION['user-surname'] = $userData['usSurname'];
+            $_SESSION['user-email'] = $userData['email'];
+            $_SESSION['user-age'] = intval($userData['age']);
+            $_SESSION['user-telephone'] = $userData['telephone'];
+            $_SESSION['user-pfp'] = $userData['pfp'];
+
             if($username == 'root'){
                 header('Location: admin.php');
             } else {

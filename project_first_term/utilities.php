@@ -54,8 +54,8 @@
         // }
     }
 
-    function register_user($name, $surname, $username, $email, $passwd, $age, $tel, $bd){
-        $query = "INSERT INTO chatapp.users (id, usName, usSurname, username, email, passwd, age, telephone, isActive) VALUES (NULL, '$name', '$surname', '$username', '$email', '$passwd', '$age', '$tel', '0');";
+    function register_user($name, $surname, $username, $email, $passwd, $age, $tel, $pfp, $bd){
+        $query = "INSERT INTO chatapp.users (usName, usSurname, username, email, passwd, age, telephone, pfp, isActive) VALUES ('$name', '$surname', '$username', '$email', '$passwd', '$age', '$tel', '$pfp', '0');";
         $result = $bd->query($query);
         //insert confirmation
         if($result->rowCount() > 0){
@@ -130,7 +130,7 @@
     function send_message($message, $senderID, /*chatID,*/$timestamp, $bd){
         if($message == ''){return TRUE;} //in this way, blank messages won't be sent 
         // $query = "INSERT INTO chatapp.messages (id, senderID, receiverID, content, msgTime, isRead) VALUES (NULL, '', '', '$message', '', '');";
-        $query = "INSERT INTO chatapp.messages (id, senderID, chatID, content, msgTime, isRead) VALUES (NULL, '$senderID', '1', '$message', '$timestamp', '');";
+        $query = "INSERT INTO chatapp.messages (senderID, chatID, content, msgTime) VALUES ('$senderID', '1', '$message', '$timestamp');";
         $result = $bd->query($query);
         
         return $result;

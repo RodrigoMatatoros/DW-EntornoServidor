@@ -12,16 +12,27 @@ CREATE TABLE IF NOT EXISTS users (
   age int NOT NULL,
   telephone varchar(16) NOT NULL,
   passwd varchar(100) NOT NULL,
+  pfp varchar(100) DEFAULT './assets/files/img/default/pfp_default.jpg',
   isActive BOOLEAN NOT NULL DEFAULT 0,
-    CONSTRAINT pk_id_users PRIMARY KEY (id)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS chats (
 	id int(10) NOT NULL AUTO_INCREMENT,
+  alias varchar(30) NOT NULL,
+  pfp varchar(100) DEFAULT './assets/files/img/default/pfp_default.jpg',
   -- numUsers int NOT NULL DEFAULT 0,
   -- msgID int(10) NOT NULL,
-    CONSTRAINT pk_id_chats PRIMARY KEY (id)
-    -- fk_id_messages FOREIGN KEY (msgID) REFERENCES messages(id)
+    PRIMARY KEY (id)
+    -- FOREIGN KEY (msgID) REFERENCES messages(id)
+);
+
+CREATE TABLE IF NOT EXISTS participate_users_chats(
+    userID int(10) NOT NULL, 
+    chatID int(10) NOT NULL,
+    PRIMARY KEY (userID, chatID),
+    FOREIGN KEY (userID) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (chatID) REFERENCES chats(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS messages (
@@ -31,20 +42,12 @@ CREATE TABLE IF NOT EXISTS messages (
   content varchar(10000) NOT NULL,
   msgTime datetime NOT NULL,
   isRead boolean NOT NULL DEFAULT 0,
-    CONSTRAINT pk_id_messages PRIMARY KEY (id),
-    CONSTRAINT fk_id_users FOREIGN KEY (senderID) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_id_chats FOREIGN KEY (chatID) REFERENCES chats(id) ON DELETE CASCADE
+    PRIMARY KEY (id),
+    FOREIGN KEY (senderID) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (chatID) REFERENCES chats(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS participate_users_chats(
-    userID int(10) NOT NULL, 
-    chatID int(10) NOT NULL,
-    CONSTRAINT pk_id_users_chats PRIMARY KEY (userID, chatID),
-    CONSTRAINT pk_fk_id_users FOREIGN KEY (userID) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT pk_fk_id_chats FOREIGN KEY (chatID) REFERENCES chats(id) ON DELETE CASCADE
-);
-
-INSERT INTO `users` (`id`, `usName`, `usSurname`, `username`, `email`, `passwd`, `isActive`) VALUES (NULL, 'root', 'root', 'root', 'root', 'root', '0');
-INSERT INTO `chats`(`id`) VALUES ('1');
-INSERT INTO `participate_users_chats`(`userID`, `chatID`) VALUES ('1', '1');
-INSERT INTO `participate_users_chats`(`userID`, `chatID`) VALUES ('2', '1');
+INSERT INTO `users` (`usName`, `usSurname`, `username`, `email`, `passwd`, `isActive`) VALUES ('root', 'root', 'root', 'root', 'root', '0');
+INSERT INTO `chats`(`id`, `alias`) VALUES ('1', 'root --test-chat');
+-- INSERT INTO `participate_users_chats`(`userID`, `chatID`) VALUES ('2', '1');
+-- INSERT INTO `participate_users_chats`(`userID`, `chatID`) VALUES ('1', '1');

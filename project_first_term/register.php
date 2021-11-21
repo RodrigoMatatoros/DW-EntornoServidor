@@ -21,18 +21,17 @@
             $passwdConf = $_POST['passwd-conf-register'];
             $age = intval($_POST['age-register']);
             $tel = $_POST['tel-register'];
+            ####CHECK THIS!!!
+            $pfp = $_POST['pfp-register'];
 
             // var_dump($passwd);
             // var_dump($passwdConf);
 
             if($passwd == $passwdConf){
                 $encryptedPasswd = password_hash($passwd, PASSWORD_DEFAULT);
-                session_start();
-                $_SESSION['user-id'] = $userID; //check this
-                $_SESSION['user-register'] = $user;
-                register_user($name, $surname, $user, $email,$encryptedPasswd, $age, $tel, $bd);
+                register_user($name, $surname, $user, $email,$encryptedPasswd, $age, $tel, $pfp, $bd);
                 // isActive($user, 1, $bd);
-                header('Location: current_chat.php');
+                header('Location: login.php');
                 
                 // $url = 'verification.php';
                 #######Future: verification email
@@ -70,29 +69,32 @@
             <fieldset>
                 <legend>Registration</legend>
                 <label for="name-register">Name*</label>
-                <input type="text" id="name-register" value = "<?php if(isset($name))echo $name;?>" name="name-register" placeholder="Name" required autofocus/><br/>
+                <input type="text" id="name-register" name="name-register" placeholder="Name" required autofocus/><br/>
 
                 <label for="surname-register">Surname(s)*</label>
-                <input type="text" id="surname-register" value = "<?php if(isset($surname))echo $surname;?>" name="surname-register" placeholder="Surname" required /><br/>
+                <input type="text" id="surname-register" name="surname-register" placeholder="Surname" required /><br/>
                 
                 <label for="user-register">Username*</label>
-                <input type="text" id="user-register" value="<?php if(isset($user))echo $user;?>" name="user-register" placeholder="Username" required/><br/>
+                <input type="text" id="user-register" name="user-register" placeholder="Username" required/><br/>
                 
                 <label for="email-register">Email*</label>
-                <input type="email" id="email-register" value="<?php if(isset($email))echo $email;?>" name="email-register" placeholder="Email address" required/><br/>
+                <input type="email" id="email-register" name="email-register" placeholder="Email address" required/><br/>
 
                 <label for="passwd-register">Password*</label>
-                <input type="password" id="passwd-register" value = "<?php if(isset($passwd))echo $passwd;?>" name="passwd-register" placeholder="Password" required /><br/>
+                <input type="password" id="passwd-register" name="passwd-register" placeholder="Password" required /><br/>
 
                 <!--make a password confirmation here-->
                 <label for="passwd-conf-register">Confirm Password*</label>
-                <input type="password" id="passwd-conf-register" value = "<?php if(isset($passwdConf))echo $passwdConf;?>" name="passwd-conf-register" placeholder="Password Confirmation" required /><br/>
+                <input type="password" id="passwd-conf-register" name="passwd-conf-register" placeholder="Password Confirmation" required /><br/>
 
                 <label for="age-register">Age*</label>
-                <input type="number" min=16 max=99 id="age-register" value="<?php if(isset($age))echo $age;?>" name="age-register" placeholder="Age" /><br/>
+                <input type="number" min=16 max=99 id="age-register" name="age-register" placeholder="Age" /><br/>
 
                 <label for="tel-register">Telephone number</label>
-                <input type="tel" id="tel-register" value="<?php if(isset($phone_number))echo $phone_number;?>" name="tel-register" placeholder="Phone number" /><br/><br/>
+                <input type="tel" id="tel-register" name="tel-register" placeholder="Phone number" /><br/>
+
+                <label for="pfp-register">Profile picture</label>
+                <input type="file" id="pfp-register" name="pfp-register" placeholder="Choose a picture" /><br/><br/>
 
                 <button type="submit">Register</button>
                 <button type="reset">Cancel</button><br/>

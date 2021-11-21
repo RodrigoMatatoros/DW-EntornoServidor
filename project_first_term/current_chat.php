@@ -1,7 +1,16 @@
 <?php
     require_once 'utilities.php';
+
     session_start();
     $userID = $_SESSION['user-id'];
+    $user = $_SESSION['username'];
+    $userName = $_SESSION['user-name'];
+    $userSurname = $_SESSION['user-surname'];
+    $email = $_SESSION['user-email'];
+    $age = $_SESSION['user-age'];
+    $telephone = $_SESSION['user-telephone'];
+    $pfp = $_SESSION['user-pfp'];
+    // var_dump($pfp);
 ?>
 
 <!DOCTYPE html>
@@ -11,20 +20,42 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="chat_style.css">
+        <link rel="stylesheet" type="text/css" href="assets/css/chat_style.css">
         <title>ChatApp</title>
     </head>
     <body>
         <a href="logout.php">Logout</a>
         <div class="main-container">
             <div class="sidebar">
-                <div class="profile">Profile</div>
+                <div class="profile">
+                    <img src="<?php if($pfp != ''){echo 'assets/files/img/' . $pfp;}?>" onerror="this.src='assets/files/img/default/pfp_default.jpg'" alt="Profile Picture">
+                    <div class="profile-data-box">
+                        <p class="data-item"><?= $user ?></p>
+                        <p class="data-item"><?= $userName . ' ' . $userSurname ?></p>
+                        <p class="data-item">Status</p>
+                    </div>
+                    <a class="edit-link" href="#">Edit</a> <!-- href="profile.php" -->
+                </div>
+                <div class="search-contacts">SEARCH CONTACTS</div>
                 <div class="chats">
+                    <?php
+                        $query = "SELECT * FROM chatapp.chats   
+                                    INNER JOIN chatapp.participate_users_chats ON chats.id = participate_users_chats.chatID
+                                    INNER JOIN chatapp.users ON users.id = participate_users_chats.userID
+                                    WHERE users.id LIKE '$userID'";
+                        $result = $bd->query($query);
+                        $chats = $result->fetchAll();
+                        foreach($chats as $chat){
+                            echo '
+                                <div class="chat">' . $chat['alias'] . '</div>
+                            ';
+                        }
+                    ?>
                 </div>
             </div>
             <div class="current-chat">
                 <div class="contact-info">Contact Info</div>
-                <div class="chat"  id="chat">
+                <div class="chat-box"  id="chat">
                     <!--EXAMPLE MESSAGES-->
                     <!--
                     <div class="message-received">
@@ -43,10 +74,15 @@
                     </div>
                     -->
                     <?php
-                        var_dump($userID);
-                        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['message'])) {
+                        // var_dump($userID);
+                        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['message'])){
                             $date = date('Y-m-d H:i:s');
-                            $message = send_message($_POST['message'], $userID, /*chatID,*/$date, $bd);
+                            $newMessage = $_POST['message'];
+                            $message = send_message($newMessage, $userID, /*chatID,*/$date, $bd);
+                            // $_POST['message'] = NULL;
+                            // $newMessage = NULL;
+                            unset($_POST['message']);
+                            var_dump($newMessage);
                             if(!$message){
                                 echo '<p style=color:red>**ERROR: Something went wrong and the message could not be sent.</p>';
                             } else {
@@ -63,24 +99,26 @@
                                     
                                     echo '
                                         <div ' . $containerClass .'>
-                                            <p>' . $msg['content'] . '</p>
+                                            <p class="message-content">' . $msg['content'] . '</p>
                                             <div ' . $timestampClass . '>' . $msg['msgTime'] . '</div>
                                         </div>
                                     ';
                                 }
+                                // header('Location: current_chat.php');
                             }
                         }
                     ?>
                 </div>
                 <div class="send-message">
-                    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'])?>" method="POST">
+                    <form action="" method="POST">
                         <div class="message-box">
                             <!-- <input type="text" id="message-box" name="message" placeholder="Escribe un mensaje..." autofocus> -->
-                            <textarea rows="10" cols="50" name="message" placeholder="Escribe un mensaje..." autofocus></textarea>
+                            <textarea rows="10" cols="50" name="message" placeholder="Type your message here..." autofocus></textarea>
                         </div>
                         <div class="send-message-button" id="send-msg">
                             <button type="submit">Send</button>
                             <!-- look how to make the chat div scroll down automatically -->
+                        </div>
                     </form>
                 </div>
             </div>
