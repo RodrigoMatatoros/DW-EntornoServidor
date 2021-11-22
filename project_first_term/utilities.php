@@ -55,14 +55,26 @@
     }
 
     function register_user($name, $surname, $username, $email, $passwd, $age, $tel, $pfp, $bd){
-        $query = "INSERT INTO chatapp.users (usName, usSurname, username, email, passwd, age, telephone, pfp, isActive) VALUES ('$name', '$surname', '$username', '$email', '$passwd', '$age', '$tel', '$pfp', '0');";
-        $result = $bd->query($query);
-        //insert confirmation
-        if($result->rowCount() > 0){
-            echo '<p style="color:lightgreen">**SUCCESS: Registration complete!</p>';		
-            // return $result->fetch();
+        if(empty($pfp)){
+            $query = "INSERT INTO chatapp.users (usName, usSurname, username, email, passwd, age, telephone) VALUES ('$name', '$surname', '$username', '$email', '$passwd', '$age', '$tel');";
+            $result = $bd->query($query);
+            //insert confirmation
+            if($result->rowCount() > 0){
+                echo '<p style="color:lightgreen">**SUCCESS: Registration complete!</p>';		
+                // return $result->fetch();
+            } else {
+                echo '<p style="color:red">**ERROR: Check user or password!</p>';
+            }
         } else {
-            echo '<p style="color:red">**ERROR: Check user or password!</p>';
+            $query = "INSERT INTO chatapp.users (usName, usSurname, username, email, passwd, age, telephone, pfp) VALUES ('$name', '$surname', '$username', '$email', '$passwd', '$age', '$tel', '$pfp');";
+            $result = $bd->query($query);
+            //insert confirmation
+            if($result->rowCount() > 0){
+                echo '<p style="color:lightgreen">**SUCCESS: Registration complete!</p>';		
+                // return $result->fetch();
+            } else {
+                echo '<p style="color:red">**ERROR: Check user or password!</p>';
+            }
         }
     }
 
@@ -127,18 +139,18 @@
         }
     }
 
-    function send_message($message, $senderID, /*chatID,*/$timestamp, $bd){
+    function send_message($message, $senderID, $chatID, $timestamp, $bd){
         if($message == ''){return TRUE;} //in this way, blank messages won't be sent 
         // $query = "INSERT INTO chatapp.messages (id, senderID, receiverID, content, msgTime, isRead) VALUES (NULL, '', '', '$message', '', '');";
-        $query = "INSERT INTO chatapp.messages (senderID, chatID, content, msgTime) VALUES ('$senderID', '1', '$message', '$timestamp');";
+        $query = "INSERT INTO chatapp.messages (senderID, chatID, content, msgTime) VALUES ('$senderID', '$chatID', '$message', '$timestamp');";
         $result = $bd->query($query);
         
         return $result;
     }
 
-    function get_messages(/*$senderID,*/$bd){
+    function get_messages($chatID, $bd){
         // $query = "SELECT * FROM chatapp.messages WHERE messages.chatID LIKE '$chatID'";
-        $query = "SELECT * FROM chatapp.messages WHERE messages.chatID LIKE 1";
+        $query = "SELECT * FROM chatapp.messages WHERE messages.chatID LIKE $chatID";
         $result = $bd->query($query);
         $result = $result->fetchAll();
         // var_dump($result);
@@ -162,10 +174,10 @@
         $query = "INSERT INTO `chats`(`alias`) VALUES ('$alias')";
         $result = $bd->query($query);
 
-        $query = "SELECT chats.id FROM chatapp.chats WHERE chats.alias LIKE '$alias' ORDER BY chats.id DESC LIMIT 1";
-        $result = $bd->query($query);
-        $id = $result->fetch();
-        return $id;
+        $query2 = "SELECT chats.id FROM chatapp.chats WHERE chats.alias LIKE '$alias' ORDER BY chats.id DESC LIMIT 1";
+        $result2 = $bd->query($query2);
+        $id = $result2->fetch();
+        return $id[0];
     }
 
     function add_participants_chat($participant, $chatID, $bd){
@@ -178,6 +190,61 @@
         } else {
             return false;
         }
+    }
+
+    function upload_file(){
+        if (empty($_FILES["pfp-register"]["name"])) {
+            return "";
+        }
+        
+        $target_dir = "assets/files/uploads/";
+        $target_file = $target_dir . basename($_FILES["pfp-register"]["name"]);
+        $uploadOk = 1;
+        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+        // Check if image file is a actual image or fake image
+        if(isset($_POST["submit"])) {
+            $check = getimagesize($_FILES["pfp-register"]["tmp_name"]);
+            if($check !== false) {
+                echo "File is an image - " . $check["mime"] . ".";
+                $uploadOk = 1;
+            } else {
+                echo "File is not an image.";
+                $uploadOk = 0;
+            }
+        }
+
+        // Check if file already exists
+        if (file_exists($target_file)) {
+            echo "Sorry, file already exists.";
+            $uploadOk = 0;
+        }
+
+        // Check file size
+        if ($_FILES["pfp-register"]["size"] > 500000) {
+            echo "Sorry, your file is too large.";
+            $uploadOk = 0;
+        }
+
+        // Allow certain file formats
+        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
+            echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+            $uploadOk = 0;
+        }
+
+        // Check if $uploadOk is set to 0 by an error
+        if ($uploadOk == 0) {
+            echo "Sorry, your file was not uploaded.";
+            // if everything is ok, try to upload file
+            } else {
+                if (move_uploaded_file($_FILES["pfp-register"]["tmp_name"], $target_file)) {
+                    echo "The file ". htmlspecialchars( basename( $_FILES["pfp-register"]["name"])). " has been uploaded.";
+                } else {
+                    echo "Sorry, there was an error uploading your file.";
+                }
+        }
+
+        return $target_file;
     }
 
     function send_passwd_recovery_email($recovery_email = null, $url){

@@ -15,6 +15,13 @@
     $query = "SELECT * FROM chatapp.users WHERE users.username NOT LIKE '$user'";
     $result = $bd->query($query);
     $users = $result->fetchAll();
+
+    if(isset($_GET['chat-id'])){
+        $chatID = $_GET['chat-id'];
+    } else {
+        header('Location: chats.php');
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -24,64 +31,40 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="assets/css/chat_style.css">
+        <link rel="stylesheet" type="text/css" href="assets/css/current_chat_style.css">
         <title>ChatApp</title>
+        <!-- DOESN'T WORK -->
+        <!-- <script>
+            var chatBox = document.getElementById('chat');
+            function start(){
+                chatBox.addEventListener('mouseenter', function(){
+                    this.classList.add("active");
+                });
+
+                chatBox.addEventListener('mouseenter', function(){
+                    this.classList.remove("active");
+                });
+
+                if(!chatBox.classList.contains('active')){   
+                    scrollToBottom();
+                }
+            }
+
+            function scrollToBottom(){
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            window.onload = start;
+        </script> -->
     </head>
     <body>
-        <a href="logout.php">Logout</a>
+        <div class="nav-container">
+            <nav>
+                <a href="logout.php">Logout</a>
+                <a href="chats.php">Home</a>
+            </nav>
+        </div>
         <div class="main-container">
-            <div class="sidebar">
-                <div class="profile">
-                    <img src="<?php if($pfp != ''){echo 'assets/files/img/' . $pfp;}?>" onerror="this.src='assets/files/img/default/pfp_default.jpg'" alt="Profile Picture">
-                    <div class="profile-data-box">
-                        <p class="data-item"><?= $user ?></p>
-                        <p class="data-item"><?= $userName . ' ' . $userSurname ?></p>
-                        <p class="data-item">Status</p>
-                    </div>
-                    <a class="edit-link" href="#">Edit</a> <!-- href="profile.php" -->
-                </div>
-                <div class="search-contacts">
-                    <?php
-                        if($_SERVER['REQUEST_METHOD'] == "POST"){
-                            $alias = $_POST['chat-alias'];
-                            $chatID = create_chat_get_id($alias, $bd);
-
-                            add_participants_chat($userID, $chatID, $bd);
-                            foreach($_POST['contact-list'] as $participant){
-                                add_participants_chat($participant, $chatID, $bd);
-                            }
-                        }
-                    ?>
-                    <form action="" method="POST">
-                        <!-- <input type="text" list="contacts" name="contact-list" multiple placeholder="Search..."/> -->
-                        <input type="text" name="chat-alias" placeholder="Alias..."/>
-                        <select name="contact-list[]" multiple placeholder="Search...">
-                        <!-- <datalist id="contacts"> -->
-                        <?php foreach ($users as $user) : ?>
-                            <option value="<?= $user['id'] ?>"><?=$user['username']?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <!-- </datalist> -->
-                        <button type="submit">OK</button>
-                        <button type="reset">Cancel</button>
-                    </form>
-                </div>
-                <div class="chats">
-                    <?php
-                        $query = "SELECT * FROM chatapp.chats   
-                                    INNER JOIN chatapp.participate_users_chats ON chats.id = participate_users_chats.chatID
-                                    INNER JOIN chatapp.users ON users.id = participate_users_chats.userID
-                                    WHERE users.id LIKE '$userID'";
-                        $result = $bd->query($query);
-                        $chats = $result->fetchAll();
-                        foreach($chats as $chat){
-                            echo '
-                                <div class="chat">' . $chat['alias'] . '</div>
-                            ';
-                        }
-                    ?>
-                </div>
-            </div>
             <div class="current-chat">
                 <div class="contact-info">Contact Info</div>
                 <div class="chat-box"  id="chat">
@@ -103,43 +86,67 @@
                     </div>
                     -->
                     <?php
+                        #get current chat messages
+                        $query = "SELECT * FROM chatapp.messages WHERE messages.chatID LIKE '$chatID'";
+                        $result = $bd->query($query);
+                        $firstMessages = $result->fetchAll();
+
+                        foreach($firstMessages as $msg){
+                            if($msg['senderID'] == intval($userID)){
+                                $containerClass = 'class="message-sent"';
+                                $timestampClass = 'class="message-timestamp-right"';
+                            } else{
+                                $containerClass = 'class="message-received"';
+                                $timestampClass = 'class="message-timestamp-left"';
+                            }
+                            
+                            echo '
+                                <div ' . $containerClass .'>
+                                    <p class="message-content">' . $msg['content'] . '</p>
+                                    <div ' . $timestampClass . '>' . $msg['msgTime'] . '</div>
+                                </div>
+                            ';
+                        }
+
+                        ###send messages and get them
                         // var_dump($userID);
-                        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['message'])){
+                           if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['message'])){
                             $date = date('Y-m-d H:i:s');
                             $newMessage = $_POST['message'];
-                            $message = send_message($newMessage, $userID, /*chatID,*/$date, $bd);
+                            $message = send_message($newMessage, $userID, $chatID, $date, $bd);
                             // $_POST['message'] = NULL;
                             // $newMessage = NULL;
-                            unset($_POST['message']);
-                            var_dump($newMessage);
+                            // unset($_POST['message']);
+                            // var_dump($newMessage);
                             if(!$message){
                                 echo '<p style=color:red>**ERROR: Something went wrong and the message could not be sent.</p>';
                             } else {
-                                $messages = get_messages(/*intval($userID),*/ /*chatID,*/$bd);
+                                // $messages = get_messages(/*intval($userID),*/ $chatID, $bd);
                                 // var_dump($messages);
-                                foreach($messages as $msg){
-                                    if($msg['senderID'] == intval($userID)){
-                                        $containerClass = 'class="message-sent"';
-                                        $timestampClass = 'class="message-timestamp-right"';
-                                    } else{
-                                        $containerClass = 'class="message-received"';
-                                        $timestampClass = 'class="message-timestamp-left"';
-                                    }
+                                // foreach($messages as $msg){
+                                //     if($msg['senderID'] == intval($userID)){
+                                //         $containerClass = 'class="message-sent"';
+                                //         $timestampClass = 'class="message-timestamp-right"';
+                                //     } else{
+                                //         $containerClass = 'class="message-received"';
+                                //         $timestampClass = 'class="message-timestamp-left"';
+                                //     }
                                     
-                                    echo '
-                                        <div ' . $containerClass .'>
-                                            <p class="message-content">' . $msg['content'] . '</p>
-                                            <div ' . $timestampClass . '>' . $msg['msgTime'] . '</div>
-                                        </div>
-                                    ';
-                                }
-                                // header('Location: current_chat.php');
+                                //         echo '
+                                //             <div ' . $containerClass .'>
+                                //                 <p class="message-content">' . $msg['content'] . '</p>
+                                //                 <div ' . $timestampClass . '>' . $msg['msgTime'] . '</div>
+                                //             </div>
+                                //         ';
+                                //     }
+                                // }
+                                header('Location: index.php?page=current_chat&chat-id='. $chatID .'');
                             }
                         }
                     ?>
                 </div>
                 <div class="send-message">
-                    <form action="" method="POST">
+                    <form action="" method="POST" autocomplete="off">
                         <div class="message-box">
                             <!-- <input type="text" id="message-box" name="message" placeholder="Escribe un mensaje..." autofocus> -->
                             <textarea rows="10" cols="50" name="message" placeholder="Type your message here..." autofocus></textarea>

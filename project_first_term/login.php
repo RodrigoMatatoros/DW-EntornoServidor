@@ -1,6 +1,10 @@
 <?php
     require_once 'utilities.php';
 
+    // if (isset($_GET["messageError"])) {
+    //     $messageError = $_GET["messageError"];
+    // }
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {  
     
         $usu = check_user_login($_POST['user-login'], $_POST['passwd-login'], $bd);
@@ -27,7 +31,7 @@
             if($username == 'root'){
                 header('Location: admin.php');
             } else {
-                header("Location: current_chat.php");
+                header("Location: chats.php");
             }
         }	
     }

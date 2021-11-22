@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
   passwd varchar(100) NOT NULL,
   pfp varchar(100) DEFAULT './assets/files/img/default/pfp_default.jpg',
   isActive BOOLEAN NOT NULL DEFAULT 0,
+  usRole enum('admin', 'client') NOT NULL DEFAULT 'client';
     PRIMARY KEY (id)
 );
 

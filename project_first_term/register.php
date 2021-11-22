@@ -29,6 +29,7 @@
 
             if($passwd == $passwdConf){
                 $encryptedPasswd = password_hash($passwd, PASSWORD_DEFAULT);
+                $pfp = upload_file();
                 register_user($name, $surname, $user, $email,$encryptedPasswd, $age, $tel, $pfp, $bd);
                 // isActive($user, 1, $bd);
                 header('Location: login.php');
@@ -65,7 +66,7 @@
 		    // if(isset($err) and $err == TRUE){echo "<p>Check user and password</p>";}
 		?> -->
 
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method='POST'>
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method='POST' autocomplete="off" enctype="multipart/form-data">
             <fieldset>
                 <legend>Registration</legend>
                 <label for="name-register">Name*</label>
