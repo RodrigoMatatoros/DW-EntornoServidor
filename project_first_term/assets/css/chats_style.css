@@ -112,10 +112,25 @@ nav{
     width: 100%;
 }
 
-.chats a{text-decoration: none;}
-.chats a .chat{
+.chats a{
+    text-decoration: none;
+    color: black;
+    /* text-align: center; */
     width: 100%;
+} 
+.chats a .chat{
     height: 5em;
     border: 1px solid black;
     border-radius: 3px;
+    display: flex;
+}
+
+.chat img{
+    margin: 5px;
+    justify-self: flex-start;
+    align-self: center;
+    border: 1px solid black;
+    border-radius: 500px;
+    width: 70px;
+    height: 70px;
 }

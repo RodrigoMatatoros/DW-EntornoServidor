@@ -92,13 +92,24 @@
                                     INNER JOIN chatapp.users ON users.id = participate_users_chats.userID
                                     WHERE users.id LIKE '$userID'";
                         $result = $bd->query($query);
-                        $chats = $result->fetchAll();
+                        $chats = $result->fetchAll(PDO::FETCH_ASSOC); //chats[][]
+
+                        // $participants = $chats['username'];
                         foreach($chats as $chat){
+                            $query2 = "SELECT group_concat(users.username separator ', ') FROM chatapp.users
+                                        INNER JOIN chatapp.participate_users_chats ON participate_users_chats.userID = users.id
+                                        WHERE participate_users_chats.chatID LIKE " . $chat['chatID'];
+                            $result2 = $bd->query($query2);
+                            $usersInChat = $result2->fetch();
                             echo '
                                 <a href="index.php?page=current_chat&chat-id='. $chat['chatID'] .'">
-                                    <div  class="chat">'
-                                        . $chat['alias'] . 
-                                    '</div>
+                                    <div class="chat">
+                                        <img src="' . $chat['pfp'] . '" alt="Profile picture">
+                                        <div class="profile-data-box">
+                                            <p class="data-item">' . $chat['alias'] . '</p>
+                                            <p class="data-item">' . implode($usersInChat) . '</p>
+                                        </div>
+                                    </div>
                                 </a>
                             ';  
                         }
