@@ -79,7 +79,7 @@
     }
 
     function check_user_login($user, $passwd, $bd){
-        $userExists = $bd->query("SELECT users.username, users.id FROM chatapp.users WHERE users.username LIKE '$user'");
+        $userExists = $bd->query("SELECT users.id FROM chatapp.users WHERE users.username LIKE '$user'");
         // $userExists = $query->fetch();
         // var_dump($userExists);
         
@@ -110,11 +110,27 @@
             return FALSE;
         }
 
-        // if($resul->rowCount() === 1){		
-        //     return $resul->fetch();		
-        // }else{
-        //     return FALSE;
-        // }
+        /*
+        $query = "SELECT users.passwd FROM chatapp.users WHERE users.username LIKE '$user'";
+        $result = $bd->query($query);
+        if($result->rowCount() > 0){
+            // if($result->rowCount() > 0 && password_verify($passwd, strval($result))){
+            $result = $result->fetch();
+            if($user === 'root'){
+                if($passwd == strval($result['passwd'])){return TRUE;}
+                else {return FALSE;}
+            } else {
+                if(password_verify($passwd, strval($result['passwd']))){
+                    return TRUE;
+                } else {
+                    // echo '<p style="color:red">**ERROR: Check user or password!</p>';
+                    return FALSE;
+                }
+            }
+        } else {
+            echo '<p style="color:red">**ERROR: No passwords received from the database!</p>';
+        }
+        */
     }
 
     // function isActive($user, $bool ,$bd){
@@ -192,6 +208,17 @@
         }
     }
 
+    function leave_group($userID, $chatID, $bd){
+        $query = "DELETE FROM chatapp.participate_users_chats WHERE participate_users_chats.userID LIKE $userID AND participate_users_chats.chatID LIKE $chatID";
+        // $result = $bd->query($query);
+        $statement = $bd->query($query);
+        // var_dump($statement);
+        $result = $statement->fetch();
+        // var_dump($result);
+        
+        return $result;
+    }
+
     function upload_file(){
         if (empty($_FILES["pfp-register"]["name"])) {
             return "";
@@ -241,6 +268,61 @@
                     echo "The file ". htmlspecialchars( basename( $_FILES["pfp-register"]["name"])). " has been uploaded.";
                 } else {
                     echo "Sorry, there was an error uploading your file.";
+                }
+        }
+
+        return $target_file;
+    }
+
+    function upload_file_edit_profile(){
+        if (empty($_FILES["pfp-edit"]["name"])) {
+            return "";
+        }
+        
+        $target_dir = "assets/files/uploads/";
+        $target_file = $target_dir . basename($_FILES["pfp-edit"]["name"]);
+        $uploadOk = 1;
+        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+        // Check if image file is a actual image or fake image
+        if(isset($_POST["submit"])) {
+            $check = getimagesize($_FILES["pfp-edit"]["tmp_name"]);
+            if($check !== false) {
+                echo "File is an image - " . $check["mime"] . ".";
+                $uploadOk = 1;
+            } else {
+                echo "File is not an image.";
+                $uploadOk = 0;
+            }
+        }
+
+        // Check if file already exists
+        // if (file_exists($target_file)) {
+        //     echo "Sorry, file already exists.";
+        //     $uploadOk = 0;
+        // }
+
+        // Check file size
+        if ($_FILES["pfp-edit"]["size"] > 5000000) {
+            echo '<p style="color:red">ERROR: Sorry, your file is too large.</p>';
+            $uploadOk = 0;
+        }
+
+        // Allow certain file formats
+        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
+            echo '<p style="color:red">Sorry, only JPG, JPEG, PNG & GIF files are allowed.</p>';
+            $uploadOk = 0;
+        }
+
+        // Check if $uploadOk is set to 0 by an error
+        if ($uploadOk == 0) {
+            echo '<p style="color:red">ERROR: Sorry, your file was not uploaded.</p>';
+            // if everything is ok, try to upload file
+            } else {
+                if (move_uploaded_file($_FILES["pfp-edit"]["tmp_name"], $target_file)) {
+                    // echo "The file ". htmlspecialchars( basename( $_FILES["pfp-edit"]["name"])). " has been uploaded.";
+                } else {
+                    echo '<p style="color:red">ERROR: Sorry, there was an error uploading your file.</p>';
                 }
         }
 

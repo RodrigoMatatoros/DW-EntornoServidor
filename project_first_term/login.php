@@ -27,6 +27,8 @@
             $_SESSION['user-age'] = intval($userData['age']);
             $_SESSION['user-telephone'] = $userData['telephone'];
             $_SESSION['user-pfp'] = $userData['pfp'];
+            $_SESSION['user-active'] = $userData['isActive'];
+            $_SESSION['user-role'] = $userData['usRole'];
 
             if($username == 'root'){
                 header('Location: admin.php');

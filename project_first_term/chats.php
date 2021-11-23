@@ -10,6 +10,8 @@
     $age = $_SESSION['user-age'];
     $telephone = $_SESSION['user-telephone'];
     $pfp = $_SESSION['user-pfp'];
+    $userActive = $_SESSION['user-active'];
+    $role = $_SESSION['user-role'];
     // var_dump($pfp);
 
     $query = "SELECT * FROM chatapp.users WHERE users.username NOT LIKE '$user'";
@@ -29,6 +31,17 @@
     </head>
     
     <body>
+        <style>
+            nav{background-color: white;}
+            .nav-container{margin: 10px;background-color: white;position: sticky;
+                top: 0px;display: flex;justify-content: space-between;
+                align-items: center;z-index: 1;padding: 0 3em;border: 1px solid black;}
+            nav{padding: 5px;width: 100%;height: 100%;}
+            .nav-container a{margin: 1.5em;display: inline;
+                text-decoration: none;line-height: 0.2em;width: 5em;}
+            .nav-container a{color: black;}
+            .nav-container a:hover{text-decoration: underline;}
+        </style>
         <div class="nav-container">
             <nav>
                 <a href="logout.php">Logout</a>
@@ -87,7 +100,7 @@
                 </div>
                 <div class="chats">
                     <?php
-                        $query = "SELECT * FROM chatapp.chats   
+                        $query = "SELECT chats.* FROM chatapp.chats   
                                     INNER JOIN chatapp.participate_users_chats ON chats.id = participate_users_chats.chatID
                                     INNER JOIN chatapp.users ON users.id = participate_users_chats.userID
                                     WHERE users.id LIKE '$userID'";
@@ -98,16 +111,16 @@
                         foreach($chats as $chat){
                             $query2 = "SELECT group_concat(users.username separator ', ') FROM chatapp.users
                                         INNER JOIN chatapp.participate_users_chats ON participate_users_chats.userID = users.id
-                                        WHERE participate_users_chats.chatID LIKE " . $chat['chatID'];
+                                        WHERE participate_users_chats.chatID LIKE " . $chat['id'];
                             $result2 = $bd->query($query2);
                             $usersInChat = $result2->fetch();
                             echo '
-                                <a href="index.php?page=current_chat&chat-id='. $chat['chatID'] .'">
+                                <a href="index.php?page=current_chat&chat-id='. $chat['id'] .'">
                                     <div class="chat">
                                         <img src="' . $chat['pfp'] . '" alt="Profile picture">
                                         <div class="profile-data-box">
                                             <p class="data-item">' . $chat['alias'] . '</p>
-                                            <p class="data-item">' . implode($usersInChat) . '</p>
+                                            <p class="data-item">' . $usersInChat[0] . '</p>
                                         </div>
                                     </div>
                                 </a>

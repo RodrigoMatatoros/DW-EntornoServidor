@@ -31,33 +31,21 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="assets/css/current_chat_style.css">
+        <link rel="stylesheet" type="text/css" href="/project_first_term/assets/css/current_chat_style.css">
         <title>ChatApp</title>
-        <!-- DOESN'T WORK -->
-        <!-- <script>
-            var chatBox = document.getElementById('chat');
-            function start(){
-                chatBox.addEventListener('mouseenter', function(){
-                    this.classList.add("active");
-                });
-
-                chatBox.addEventListener('mouseenter', function(){
-                    this.classList.remove("active");
-                });
-
-                if(!chatBox.classList.contains('active')){   
-                    scrollToBottom();
-                }
-            }
-
-            function scrollToBottom(){
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-
-            window.onload = start;
-        </script> -->
     </head>
     <body>
+        <style>
+            nav{background-color: white;}
+            .nav-container{margin: 10px;background-color: white;position: sticky;
+                top: 0px;display: flex;justify-content: space-between;
+                align-items: center;z-index: 1;padding: 0 3em;border: 1px solid black;}
+            nav{padding: 5px;width: 100%;height: 100%;}
+            .nav-container a{margin: 1.5em;display: inline;
+                text-decoration: none;line-height: 0.2em;width: 5em;}
+            .nav-container a{color: black;}
+            .nav-container a:hover{text-decoration: underline;}
+        </style>
         <div class="nav-container">
             <nav>
                 <a href="logout.php">Logout</a>
@@ -66,28 +54,26 @@
         </div>
         <div class="main-container">
             <div class="current-chat">
-                <div class="contact-info">Contact Info</div>
+                <div class="contact-info">
+                    <?php
+                        $query = "SELECT count(participate_users_chats.userID) FROM chatapp.participate_users_chats WHERE chatID LIKE $chatID";
+                        $result = $bd->query($query);
+                        $usersCount = $result->fetch();
+                        // var_dump($usersCount);
+                        if(intval($usersCount[0]) > 2){
+                            echo '<a href="index.php?page=leave_groups&user-id=' . $userID . '&chat-id=' . $chatID . '">Leave</a>';
+                            // echo '<a href="chats.php" onclick="' . leave_group($userID, $chatID, $bd) . '">Leave</a>';
+                        }
+                    ?>
+                    
+                </div>
                 <div class="chat-box"  id="chat">
-                    <!--EXAMPLE MESSAGES-->
-                    <!--
-                    <div class="message-received">
-                        <p class="message-content">This is an awesome message!</p>
-                        <div class="message-timestamp-left">SMS 13:37</div>
-                    </div>
-        
-                    <div class="message-sent">
-                        <p class="message-content">I agree that your message is awesome!</p>
-                        <div class="message-timestamp-right">SMS 13:37</div>
-                    </div>
-
-                    <div class="message-received">
-                        <p class="message-content">Thanks!</p>
-                        <div class="message-timestamp-left">SMS 13:37</div>
-                    </div>
-                    -->
                     <?php
                         #get current chat messages
-                        $query = "SELECT * FROM chatapp.messages WHERE messages.chatID LIKE '$chatID'";
+                        $query = "SELECT *, users.username FROM chatapp.messages
+                                    INNER JOIN chatapp.users ON users.id = messages.senderID
+                                    WHERE messages.chatID LIKE '$chatID'
+                                    ORDER BY messages.msgTime";
                         $result = $bd->query($query);
                         $firstMessages = $result->fetchAll();
 
@@ -99,50 +85,40 @@
                                 $containerClass = 'class="message-received"';
                                 $timestampClass = 'class="message-timestamp-left"';
                             }
-                            
+
                             echo '
-                                <div ' . $containerClass .'>
-                                    <p class="message-content">' . $msg['content'] . '</p>
-                                    <div ' . $timestampClass . '>' . $msg['msgTime'] . '</div>
-                                </div>
-                            ';
+                                    <div ' . $containerClass .'>
+                                        <div class="message-sender" style="text-align:center; border: 0; border-radius:0; border-bottom:1px solid black; font-weight:bold; margin: 0;">' . $msg['username'] . '</div>
+                                        <p class="message-content">' . $msg['content'] . '</p>
+                                        <div ' . $timestampClass . '>' . $msg['msgTime'] . '</div>
+                                    </div>
+                                ';
                         }
 
                         ###send messages and get them
                         // var_dump($userID);
-                           if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['message'])){
+                        if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['message'])){
                             $date = date('Y-m-d H:i:s');
                             $newMessage = $_POST['message'];
                             $message = send_message($newMessage, $userID, $chatID, $date, $bd);
-                            // $_POST['message'] = NULL;
-                            // $newMessage = NULL;
-                            // unset($_POST['message']);
-                            // var_dump($newMessage);
+
                             if(!$message){
-                                echo '<p style=color:red>**ERROR: Something went wrong and the message could not be sent.</p>';
+                                // echo '<p style="color:red">**ERROR: Something went wrong and the message could not be sent.</p>';
                             } else {
-                                // $messages = get_messages(/*intval($userID),*/ $chatID, $bd);
-                                // var_dump($messages);
-                                // foreach($messages as $msg){
-                                //     if($msg['senderID'] == intval($userID)){
-                                //         $containerClass = 'class="message-sent"';
-                                //         $timestampClass = 'class="message-timestamp-right"';
-                                //     } else{
-                                //         $containerClass = 'class="message-received"';
-                                //         $timestampClass = 'class="message-timestamp-left"';
-                                //     }
-                                    
-                                //         echo '
-                                //             <div ' . $containerClass .'>
-                                //                 <p class="message-content">' . $msg['content'] . '</p>
-                                //                 <div ' . $timestampClass . '>' . $msg['msgTime'] . '</div>
-                                //             </div>
-                                //         ';
-                                //     }
-                                // }
-                                header('Location: index.php?page=current_chat&chat-id='. $chatID .'');
+                                header("Location: index.php?page=current_chat&chat-id=$chatID");
+                                // header_remove("Location: index.php?page=current_chat&chat-id=$chatID");
                             }
                         }
+                        // if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['message'])){
+                        //     $date = date('Y-m-d H:i:s');
+                        //     $newMessage = $_POST['message'];
+                        //     $message = send_message($newMessage, $userID, $chatID, $date, $bd);
+
+                        //     if(!$message){
+                        //         echo '<p style=color:red>**ERROR: Something went wrong and the message could not be sent.</p>';
+                        //     } else {
+                        //     }
+                        // }   
                     ?>
                 </div>
                 <div class="send-message">

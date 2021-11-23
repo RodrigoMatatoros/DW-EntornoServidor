@@ -72,6 +72,7 @@ nav{
 .profile img{
     margin: 5px;
     width: 70px;
+    height: 70px;
     align-self: center;
     border: 3px solid black;
     border-radius: 50px;
