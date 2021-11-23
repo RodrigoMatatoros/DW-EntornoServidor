@@ -49,6 +49,6 @@ CREATE TABLE IF NOT EXISTS messages (
 );
 
 INSERT INTO `users` (`usName`, `usSurname`, `username`, `email`, `passwd`, `isActive`, `usRole`) VALUES ('root', 'root', 'root', 'root', 'root', '1', 'admin');
-INSERT INTO `chats`(`id`, `alias`) VALUES ('1', 'root --test-chat');
+-- INSERT INTO `chats`(`id`, `alias`) VALUES ('1', 'root --test-chat');
 -- INSERT INTO `participate_users_chats`(`userID`, `chatID`) VALUES ('2', '1');
 -- INSERT INTO `participate_users_chats`(`userID`, `chatID`) VALUES ('1', '1');

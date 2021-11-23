@@ -46,7 +46,7 @@
             <nav>
                 <a href="logout.php">Logout</a>
                 <a href="chats.php">Home</a>
-                <!-- <a href="index.php?page=current_chat&chat-id=" . $chatID>Last Chat</a> -->
+                <?php if($role == 'admin'){echo '<a href="admin.php">Admin Zone</a>';} ?>
             </nav>
         </div>
         <div class="main-container">
@@ -68,18 +68,10 @@
                             // var_dump($chatID);
 
                             $resultInsertParticipant = add_participants_chat($userID, $chatID, $bd);
-                            // if (!$resultInsertParticipant) {
-                            //     $messageError = "Please verify your information";
-                            //     header('Location: login.php');
-                            // }
                             // var_dump($_POST['contactlist']);
                             foreach($_POST['contact-list'] as $participant){
                                 // var_dump($participant);
-                                
                                 $resultInsertParticipant = add_participants_chat($participant, $chatID, $bd);
-                                // if (!$resultInsertParticipant) {
-                                    //     $messageError = "Please verify your information";
-                                    // }
                             }
                             header('Location: index.php?page=current_chat&chat-id='. $chatID .'');
                         }

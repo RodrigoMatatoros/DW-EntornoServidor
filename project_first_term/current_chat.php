@@ -69,6 +69,7 @@
                 </div>
                 <div class="chat-box"  id="chat">
                     <?php
+                        ob_start();
                         #get current chat messages
                         $query = "SELECT *, users.username FROM chatapp.messages
                                     INNER JOIN chatapp.users ON users.id = messages.senderID
@@ -86,13 +87,17 @@
                                 $timestampClass = 'class="message-timestamp-left"';
                             }
 
-                            echo '
-                                    <div ' . $containerClass .'>
-                                        <div class="message-sender" style="text-align:center; border: 0; border-radius:0; border-bottom:1px solid black; font-weight:bold; margin: 0;">' . $msg['username'] . '</div>
-                                        <p class="message-content">' . $msg['content'] . '</p>
-                                        <div ' . $timestampClass . '>' . $msg['msgTime'] . '</div>
+                            $msgUsername = $msg['username'];
+                            $msgContent = $msg['content'];
+                            $msgTimestamp = $msg['msgTime'];
+
+                            echo "
+                                    <div $containerClass>
+                                        <div class='message-sender'>$msgUsername</div>
+                                        <p class='message-content'>$msgContent</p>
+                                        <div $timestampClass>$msgTimestamp</div>
                                     </div>
-                                ';
+                                ";
                         }
 
                         ###send messages and get them
@@ -109,16 +114,7 @@
                                 // header_remove("Location: index.php?page=current_chat&chat-id=$chatID");
                             }
                         }
-                        // if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['message'])){
-                        //     $date = date('Y-m-d H:i:s');
-                        //     $newMessage = $_POST['message'];
-                        //     $message = send_message($newMessage, $userID, $chatID, $date, $bd);
-
-                        //     if(!$message){
-                        //         echo '<p style=color:red>**ERROR: Something went wrong and the message could not be sent.</p>';
-                        //     } else {
-                        //     }
-                        // }   
+                        ob_end_flush();
                     ?>
                 </div>
                 <div class="send-message">

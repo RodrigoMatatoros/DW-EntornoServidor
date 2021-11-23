@@ -18,6 +18,10 @@
         header('Location: logout.php');
     }
 
+    $queryUsers = "SELECT * FROM users";
+    $result = $bd->query($queryUsers);
+    $resultUsers = $result->fetchAll();
+
 ?>
 
 <!DOCTYPE html>
@@ -27,6 +31,7 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="assets/css/admin_style.css">
         <title>ADMIN ZONE</title>
     </head>
 
@@ -46,7 +51,6 @@
             <nav>
                 <a href="logout.php">Logout</a>
                 <a href="chats.php">Home</a>
-                <!-- <a href="current_chat.php">Last Chat</a> -->
             </nav>
         </div>
 
@@ -55,11 +59,22 @@
         </header>
 
         <div class="users">
-            <div class="user"></div>
-            <button name="del-user">
-                
-            </button>
-        </div>
+                <?php foreach($resultUsers as $user) : ?>
+                    <div class="user-admin">
+                        <p class="item"><?= " -id:[" . $user['id'] . "]" ?></p>
+                        <p class="item"><?= " -name:[" . $user['usName'] . "]" ?></p>
+                        <p class="item"><?= " -surname:[" . $user['usSurname'] . "]" ?></p>
+                        <p class="item"><?= " -username:[" . $user['username'] . "]" ?></p>
+                        <p class="item"><?= " -email:[" . $user['email'] . "]" ?></p>
+                        <p class="item"><?= " -age:[" . $user['age'] . "]" ?></p>
+                        <p class="item"><?= " -tel:[ " . $user['telephone'] . "]" ?></p>
+                        <p class="item"><?= " -pfp:[" . $user['pfp'] . "]" ?></p>
+                        <p class="item"><?= " -active:[" . $user['isActive'] . "]" ?></p>
+                        <p class="item"><?= " -role:[" . $user['usRole'] . "]" ?></p>
+                    </div>
+                <?php endforeach;?>
+            </div>
+            <button name="del-user">Delete user</button>
         <div class="messages">
             <div class="messaage"></div>
             <button name="del-msg">Delete message</button>
