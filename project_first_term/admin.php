@@ -22,6 +22,45 @@
     $result = $bd->query($queryUsers);
     $resultUsers = $result->fetchAll();
 
+    if(isset($_GET['verification'])){
+        
+        $usID = $_GET['user-id'];
+        $query = "SELECT * FROM users WHERE id LIKE $usID";
+        $result = $bd->query($query);
+        $result = $result->fetch();
+
+        if($result['isActive'] == 0){
+            $query = "UPDATE `users` SET `isActive` = 1
+                    WHERE `id` LIKE '$usID'";
+            $result = $bd->query($query);
+            header('Location: admin.php');
+        } else {
+            $query = "UPDATE `users` SET `isActive` = 0
+            WHERE `id` LIKE '$usID'";
+            $result = $bd->query($query);
+            header('Location: admin.php');
+        }
+    }
+
+    if(isset($_GET['role'])){
+        
+        $usID = $_GET['user-id'];
+        $query = "SELECT * FROM users WHERE id LIKE $usID";
+        $result = $bd->query($query);
+        $result = $result->fetch();
+
+        if($result['usRole'] == 'client'){
+            $query = "UPDATE `users` SET `usRole` = 'admin'
+                    WHERE `id` LIKE '$usID'";
+            $result = $bd->query($query);
+            header('Location: admin.php');
+        } else {
+            $query = "UPDATE `users` SET `usRole` = 'client'
+            WHERE `id` LIKE '$usID'";
+            $result = $bd->query($query);
+            header('Location: admin.php');
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +70,9 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="assets/css/admin_style.css">
+        <!-- CSS only -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <!-- <link rel="stylesheet" href="assets/css/admin_style.css"> -->
         <title>ADMIN ZONE</title>
     </head>
 
@@ -58,33 +99,41 @@
             <h1>Admin Zone</h1>
         </header>
 
-        <div class="users">
-                <?php foreach($resultUsers as $user) : ?>
-                    <div class="user-admin">
-                        <p class="item"><?= " -id:[" . $user['id'] . "]" ?></p>
-                        <p class="item"><?= " -name:[" . $user['usName'] . "]" ?></p>
-                        <p class="item"><?= " -surname:[" . $user['usSurname'] . "]" ?></p>
-                        <p class="item"><?= " -username:[" . $user['username'] . "]" ?></p>
-                        <p class="item"><?= " -email:[" . $user['email'] . "]" ?></p>
-                        <p class="item"><?= " -age:[" . $user['age'] . "]" ?></p>
-                        <p class="item"><?= " -tel:[ " . $user['telephone'] . "]" ?></p>
-                        <p class="item"><?= " -pfp:[" . $user['pfp'] . "]" ?></p>
-                        <p class="item"><?= " -active:[" . $user['isActive'] . "]" ?></p>
-                        <p class="item"><?= " -role:[" . $user['usRole'] . "]" ?></p>
-                    </div>
-                <?php endforeach;?>
-            </div>
-            <button name="del-user">Delete user</button>
-        <div class="messages">
-            <div class="messaage"></div>
-            <button name="del-msg">Delete message</button>
-        </div>
-        <div class="chats">
-            <div class="chat"></div>
-            <button name="del-chat">Delete chat</button>
-        </div>
-
-        <br/>
-        <button type="submit">Add user</button>
+        <table class="table table-success table-striped">
+            <thead>
+                <tr>
+                <th scope="col">ID</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Age</th>
+                <th scope="col">Telephone</th>
+                <th scope="col">Profile Picture</th>
+                <th scope="col">Verified</th>
+                <th scope="col">Role</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php foreach($resultUsers as $user) : ?>
+                    <tr>
+                    <th scope='row'><?=$user['id']?></th>
+                    <td><?=$user['usName']?></td>
+                    <td><?=$user['usSurname']?></td>
+                    <td><?=$user['username']?></td>
+                    <td><?=$user['email']?></td>
+                    <td><?=$user['age']?></td>
+                    <td><?=$user['telephone']?></td>
+                    <td><?=$user['pfp']?></td>
+                    <td><?=$user['isActive']?></td>
+                    <td><?=$user['usRole']?></td>
+                    <td><a class="btn btn-outline-success" href="index.php?page=admin&verification=1&user-id=<?=$user['id']?>" role="button">Verification</a></td>
+                    <td><a class="btn btn-outline-success" href="index.php?page=admin&role=1&user-id=<?=$user['id']?>" role="button">Role</a></td>
+                    </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
     </body>
 </html>

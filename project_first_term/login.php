@@ -30,7 +30,7 @@
             $_SESSION['user-active'] = $userData['isActive'];
             $_SESSION['user-role'] = $userData['usRole'];
 
-            if($username == 'root'){
+            if($userData['usRole'] == 'admin'){
                 header('Location: admin.php');
             } else {
                 header("Location: chats.php");

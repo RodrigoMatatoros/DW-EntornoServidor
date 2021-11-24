@@ -8,7 +8,7 @@
 			// echo "Connected";
 		}catch (PDOException $e) {
 			echo '**Database error: ' . $e->getMessage();
-		} 
+		}
     
 	function configBD($file){
 		$data = simplexml_load_file($file);
@@ -45,13 +45,6 @@
         } else {
             return FALSE;
         }
-
-        // if($result->rowCount() === 1){
-        //     echo '<p style="color:lightgreen">**SUCCESS: Registration complete!</p>';			
-        //     // return $result->fetch();
-        // } else {
-        //     echo '<p style="color:red">**ERROR: Check user or password!</p>';
-        // }
     }
 
     function register_user($name, $surname, $username, $email, $passwd, $age, $tel, $pfp, $bd){
@@ -79,48 +72,16 @@
     }
 
     function check_user_login($user, $passwd, $bd){
-        $userExists = $bd->query("SELECT users.id FROM chatapp.users WHERE users.username LIKE '$user'");
-        // $userExists = $query->fetch();
+        $query = $bd->query("SELECT users.* FROM chatapp.users WHERE users.username LIKE '$user'");
+        $userExists = $query->fetch(PDO::FETCH_ASSOC);
         // var_dump($userExists);
         
-        if($userExists->rowCount() > 0){
-            $query = "SELECT users.passwd FROM chatapp.users WHERE users.username LIKE '$user'";
-            $result = $bd->query($query);
-            // $result = $result->fetch(); 
-            // var_dump($result);
-            // echo '<br/>';
-            // var_dump(strval($result[0]));
-            
-            if($result->rowCount() > 0){
-                // if($result->rowCount() > 0 && password_verify($passwd, strval($result))){
-                $result = $result->fetch();
-                if($user === 'root'){
-                    if($passwd == strval($result['passwd'])){return TRUE;}
-                    else {return FALSE;}
-                } else {
-                    if(password_verify($passwd, strval($result['passwd']))){
-                        return TRUE;
-                    } else {
-                        // echo '<p style="color:red">**ERROR: Check user or password!</p>';
-                        return FALSE;
-                    }
-                }
-            }
-        } else {
-            return FALSE;
-        }
-
-        /*
-        $query = "SELECT users.passwd FROM chatapp.users WHERE users.username LIKE '$user'";
-        $result = $bd->query($query);
-        if($result->rowCount() > 0){
-            // if($result->rowCount() > 0 && password_verify($passwd, strval($result))){
-            $result = $result->fetch();
-            if($user === 'root'){
-                if($passwd == strval($result['passwd'])){return TRUE;}
+        if($userExists){
+            if($userExists['username'] === 'root'){
+                if($passwd == strval($userExists['passwd'])){return TRUE;}
                 else {return FALSE;}
             } else {
-                if(password_verify($passwd, strval($result['passwd']))){
+                if(password_verify($passwd, strval($userExists['passwd']))){
                     return TRUE;
                 } else {
                     // echo '<p style="color:red">**ERROR: Check user or password!</p>';
@@ -128,9 +89,8 @@
                 }
             }
         } else {
-            echo '<p style="color:red">**ERROR: No passwords received from the database!</p>';
+            return FALSE;
         }
-        */
     }
 
     // function isActive($user, $bool ,$bd){
@@ -224,7 +184,7 @@
             return "";
         }
         
-        $target_dir = "assets/files/uploads/";
+        $target_dir = "./assets/files/uploads/";
         $target_file = $target_dir . basename($_FILES["pfp-register"]["name"]);
         $uploadOk = 1;
         $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
@@ -279,7 +239,7 @@
             return "";
         }
         
-        $target_dir = "assets/files/uploads/";
+        $target_dir = "./assets/files/uploads/";
         $target_file = $target_dir . basename($_FILES["pfp-edit"]["name"]);
         $uploadOk = 1;
         $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
@@ -386,15 +346,8 @@
             // --
             $mail->SetFrom('talesdemiletoxd@gmail.com');
             $mail->Subject    = 'VERIFICATION';
-            $mail->MsgHTML(
-                'Here is the last step to complete your registration.<br/>
-                You must enter the following code in the verification form: '
-                 . '<br/> - <b>' . $verifCode . '</b>'
-                //check this
-                //  . '<br/> - http://localhost/project_first_term/'.$url
-                 . '<br/><br/>Thank you for joining our family!'
-            );
-            // $mail->addAttachment($_FILES['file-send']);
+            $mail->MsgHTML();
+            
             $mail->AddAddress($verif_email);
             $result = $mail->Send();
             return $result;
