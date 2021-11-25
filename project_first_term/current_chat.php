@@ -56,13 +56,41 @@
             <div class="current-chat">
                 <div class="contact-info">
                     <?php
-                        $query = "SELECT count(participate_users_chats.userID) FROM chatapp.participate_users_chats WHERE chatID LIKE $chatID";
+                        $query = "SELECT count(participate_users_chats.userID), chats.alias, chats.pfp FROM chatapp.participate_users_chats
+                                    INNER JOIN chatapp.chats ON participate_users_chats.chatID = chats.id
+                                    WHERE chatID LIKE $chatID";
                         $result = $bd->query($query);
                         $usersCount = $result->fetch();
                         // var_dump($usersCount);
+
+                        $query2 = "SELECT group_concat(users.username separator ', '), chats.alias, chats.pfp FROM chatapp.users
+                                    INNER JOIN chatapp.participate_users_chats ON participate_users_chats.userID = users.id
+                                    INNER JOIN chatapp.chats ON participate_users_chats.chatID = chats.id
+                                    WHERE participate_users_chats.chatID LIKE " . $chatID;
+                        $result2 = $bd->query($query2);
+                        $groupInfo = $result2->fetch();
+
                         if(intval($usersCount[0]) > 2){
-                            echo '<a href="index.php?page=leave_groups&user-id=' . $userID . '&chat-id=' . $chatID . '">Leave</a>';
-                            // echo '<a href="chats.php" onclick="' . leave_group($userID, $chatID, $bd) . '">Leave</a>';
+                            echo '
+                                <a href="index.php?page=leave_groups&user-id=' . $userID . '&chat-id=' . $chatID . '">Leave</a>
+                                <div class="profile-data-box">
+                                    <img src="' . $groupInfo['pfp'] . '" alt="Profile picture" width="60px" height="60px">
+                                    <div class="data-box">
+                                        <p class="alias">' . $groupInfo['alias'] . '</p>
+                                        <p class="data-item">' . $groupInfo[0] . '</p>
+                                    </div>
+                                </div>
+                            ';
+                        } else {
+                            echo '
+                            <div class="profile-data-box">
+                                <img src="' . $groupInfo['pfp'] . '" alt="Profile picture">
+                                <div class="data-box">
+                                    <p class="alias">' . $groupInfo['alias'] . '</p>
+                                    <p class="data-item">' . $groupInfo[0] . '</p>
+                                </div>
+                            </div>
+                        ';
                         }
                     ?>
                     
@@ -133,9 +161,7 @@
                             <!-- <input type="text" id="message-box" name="message" placeholder="Escribe un mensaje..." autofocus> -->
                             <textarea rows="10" cols="50" name="message" placeholder="Type your message here..." autofocus></textarea>
                         </div>
-                        <div class="send-message-button">
-                            <input type="file" name="file">
-                        </div>
+                        <input type="file" name="file">
                         <div class="send-message-button" id="send-msg">
                             <button type="submit">Send</button>
                         </div>

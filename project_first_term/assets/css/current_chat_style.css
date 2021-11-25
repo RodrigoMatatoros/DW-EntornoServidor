@@ -126,45 +126,23 @@ div{border: 1px solid black; border-radius: 3px;}
     border-bottom: 1px solid black;
 }
 
-/*----------------------CHATS and PROFILE (aside)----------------------*/
-
-.chat{height: 5em;}
-
-.profile-data-box{
-    margin: 3px;
-    padding: 5px;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    font-weight: bold;
-}
-
-.profile img{
-    margin: 5px;
-    width: 70px;
-    align-self: center;
-    border: 3px solid black;
-    border-radius: 50px;
-}
-
-.profile-data-box p:nth-child(2), .profile-data-box p:nth-child(3) {
-    font-weight: normal;
-    font-size: 0.8em;
-}
-
-.profile a{
-    margin: 5px;
-    padding: 0 3px;
-    border: 1px solid black;
-    border-radius: 3px;
-    text-decoration: none;
-    align-self: flex-end;
-}
+/*----------------------CONTACT INFO----------------------*/
 
 .data-item{
     margin: 0;
 }
 
+.profile-data-box{display: flex; flex-wrap: wrap; border: 0;}
+.data-box{display: inline; border: 0; height: 1em; padding: 1px;}
+.data-box p{margin: 0;}
+.alias{font-weight: bold; font-size: 20px;}
+.profile-data-box img{
+    margin: 5px;
+    border: 1px solid black;
+    border-radius: 500px;
+    width: 50px;
+    height: 50px;
+}
 /*---------------------- NAVBAR ----------------------*/
 
 nav{background-color: white;}
