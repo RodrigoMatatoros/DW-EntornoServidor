@@ -42,13 +42,15 @@ CREATE TABLE IF NOT EXISTS messages (
   chatID int(10) NOT NULL,
   content varchar(10000) NOT NULL,
   msgTime datetime NOT NULL,
+  msgFile varchar(1000),
+  -- DEFAULT NULL (?)
   isRead boolean NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
     FOREIGN KEY (senderID) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (chatID) REFERENCES chats(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-INSERT INTO `users` (`usName`, `usSurname`, `username`, `email`, `passwd`, `isActive`, `usRole`) VALUES ('root', 'root', 'root', 'root', 'root', '1', 'admin');
+INSERT INTO `users` (`usName`, `usSurname`, `username`, `email`, `age`, `telephone`, `passwd`, `isActive`, `usRole`) VALUES ('root', 'root', 'root', 'root', 99, '999999999', 'root', '1', 'admin');
 -- INSERT INTO `chats`(`id`, `alias`) VALUES ('1', 'root --test-chat');
 -- INSERT INTO `participate_users_chats`(`userID`, `chatID`) VALUES ('2', '1');
 -- INSERT INTO `participate_users_chats`(`userID`, `chatID`) VALUES ('1', '1');

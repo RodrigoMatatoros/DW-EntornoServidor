@@ -49,6 +49,12 @@ div{border: 1px solid black; border-radius: 3px;}
     font-weight: bold;
     border-radius: 10px;
 }
+.send-message-button input{
+    background-color: orangered;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+}
 
 /* .main-container, .profile, .chats, .contact-info, .chat-box{background-image: url('../files/img/default/bg_default.jpg');} */
 

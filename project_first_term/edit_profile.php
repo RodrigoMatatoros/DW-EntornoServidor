@@ -15,7 +15,7 @@
     if ($_SERVER["REQUEST_METHOD"] == "POST") {  
         $newUsername = $_POST['username-edit'];
         $newTelephone = $_POST['tel-edit'];
-        $newPfp = upload_file_edit_profile();
+        $newPfp = upload_file();
 
         if(empty($newPfp)){
             $query2 = "UPDATE `users` SET `username` = '$newUsername',
@@ -95,7 +95,7 @@
                 <input type="tel" id="tel-edit" name="tel-edit" value="<?= $userData['telephone'] ?>" placeholder="Add or Change your telephone" /><br/><br/>
 
                 <label for="pfp-edit">Change profile picture</label>
-                <input type="file" id="pfp-edit" name="pfp-edit" value="<?= $userData['pfp'] ?>" placeholder="Choose a picture" /><br/><br/>
+                <input type="file" id="pfp-edit" name="file" value="<?= $userData['pfp'] ?>" placeholder="Choose a picture" /><br/><br/>
 
                 <button type="submit">Change</button>
                 <button type="reset">Cancel</button>

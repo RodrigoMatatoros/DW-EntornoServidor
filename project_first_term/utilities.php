@@ -1,5 +1,6 @@
 <?php
     use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\SMTP;
     require "../vendor/autoload.php";
 
 		try {
@@ -93,11 +94,6 @@
         }
     }
 
-    // function isActive($user, $bool ,$bd){
-    //     $query = "UPDATE chatapp.users SET 'users.isActive' = '$bool' WHERE users.username LIKE '$user'";
-    //     $bd->query($query);
-    // }
-
     #to fix
     function verifCode(){
         $code = rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
@@ -113,6 +109,15 @@
         } else {
             return FALSE;
         }
+    }
+
+    function send_message_file($message, $senderID, $chatID, $timestamp, $file, $bd){
+        if($message == ''){return TRUE;} //in this way, blank messages won't be sent 
+        // $query = "INSERT INTO chatapp.messages (id, senderID, receiverID, content, msgTime, isRead) VALUES (NULL, '', '', '$message', '', '');";
+        $query = "INSERT INTO chatapp.messages (senderID, chatID, content, msgTime, msgFile) VALUES ('$senderID', '$chatID', '$message', '$timestamp', '$file');";
+        $result = $bd->query($query);
+        
+        return $result;
     }
 
     function send_message($message, $senderID, $chatID, $timestamp, $bd){
@@ -180,73 +185,18 @@
     }
 
     function upload_file(){
-        if (empty($_FILES["pfp-register"]["name"])) {
+        if (empty($_FILES["file"]["name"])) {
             return "";
         }
         
         $target_dir = "./assets/files/uploads/";
-        $target_file = $target_dir . basename($_FILES["pfp-register"]["name"]);
+        $target_file = $target_dir . basename($_FILES["file"]["name"]);
         $uploadOk = 1;
         $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 
         // Check if image file is a actual image or fake image
         if(isset($_POST["submit"])) {
-            $check = getimagesize($_FILES["pfp-register"]["tmp_name"]);
-            if($check !== false) {
-                echo "File is an image - " . $check["mime"] . ".";
-                $uploadOk = 1;
-            } else {
-                echo "File is not an image.";
-                $uploadOk = 0;
-            }
-        }
-
-        // Check if file already exists
-        if (file_exists($target_file)) {
-            echo "Sorry, file already exists.";
-            $uploadOk = 0;
-        }
-
-        // Check file size
-        if ($_FILES["pfp-register"]["size"] > 500000) {
-            echo "Sorry, your file is too large.";
-            $uploadOk = 0;
-        }
-
-        // Allow certain file formats
-        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
-            echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-            $uploadOk = 0;
-        }
-
-        // Check if $uploadOk is set to 0 by an error
-        if ($uploadOk == 0) {
-            echo "Sorry, your file was not uploaded.";
-            // if everything is ok, try to upload file
-            } else {
-                if (move_uploaded_file($_FILES["pfp-register"]["tmp_name"], $target_file)) {
-                    echo "The file ". htmlspecialchars( basename( $_FILES["pfp-register"]["name"])). " has been uploaded.";
-                } else {
-                    echo "Sorry, there was an error uploading your file.";
-                }
-        }
-
-        return $target_file;
-    }
-
-    function upload_file_edit_profile(){
-        if (empty($_FILES["pfp-edit"]["name"])) {
-            return "";
-        }
-        
-        $target_dir = "./assets/files/uploads/";
-        $target_file = $target_dir . basename($_FILES["pfp-edit"]["name"]);
-        $uploadOk = 1;
-        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
-        // Check if image file is a actual image or fake image
-        if(isset($_POST["submit"])) {
-            $check = getimagesize($_FILES["pfp-edit"]["tmp_name"]);
+            $check = getimagesize($_FILES["file"]["tmp_name"]);
             if($check !== false) {
                 echo "File is an image - " . $check["mime"] . ".";
                 $uploadOk = 1;
@@ -263,24 +213,24 @@
         // }
 
         // Check file size
-        if ($_FILES["pfp-edit"]["size"] > 5000000) {
+        if ($_FILES["file"]["size"] > 5000000) {
             echo '<p style="color:red">ERROR: Sorry, your file is too large.</p>';
             $uploadOk = 0;
         }
 
         // Allow certain file formats
-        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
-            echo '<p style="color:red">Sorry, only JPG, JPEG, PNG & GIF files are allowed.</p>';
-            $uploadOk = 0;
-        }
+        // if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
+        //     echo '<p style="color:red">Sorry, only JPG, JPEG, PNG & GIF files are allowed.</p>';
+        //     $uploadOk = 0;
+        // }
 
         // Check if $uploadOk is set to 0 by an error
         if ($uploadOk == 0) {
             echo '<p style="color:red">ERROR: Sorry, your file was not uploaded.</p>';
             // if everything is ok, try to upload file
             } else {
-                if (move_uploaded_file($_FILES["pfp-edit"]["tmp_name"], $target_file)) {
-                    // echo "The file ". htmlspecialchars( basename( $_FILES["pfp-edit"]["name"])). " has been uploaded.";
+                if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
+                    // echo "The file ". htmlspecialchars( basename( $_FILES["file"]["name"])). " has been uploaded.";
                 } else {
                     echo '<p style="color:red">ERROR: Sorry, there was an error uploading your file.</p>';
                 }
@@ -289,7 +239,8 @@
         return $target_file;
     }
 
-    function send_passwd_recovery_email($recovery_email = null, $url){
+    // function send_passwd_recovery_email($email = null, $content){
+    function send_email($email = null, $content){
         //remember to change the email of the app
         try{
             $mail = new PHPMailer();
@@ -306,52 +257,21 @@
             // --
             $mail->SetFrom('talesdemiletoxd@gmail.com');
             $mail->Subject    = 'PASSWORD RECOVERY';
-            $mail->MsgHTML(
-                'Here you have a link to complete the password recovery process:<br/>'
-                 . 'http://localhost/project_first_term/'.$url //check this
-                 . '<br/><br/>Good luck!'
-            );
+            $mail->MsgHTML($content);
             // $mail->addAttachment($_FILES['file-send']);
-            $mail->AddAddress($recovery_email);
+            $mail->AddAddress($email);
             $result = $mail->Send();
         } catch (Exception $e){
             //nothing here
         }
         
-        if($recovery_email){
+        if($email){
             if(!$result) {
                 echo "<p style=color:red>Error" . $mail->ErrorInfo . '</p>';
             } else {
-                echo "An email with instructions has been sent to: <b>" . $recovery_email.'</b>';
-                $recovery_email = null;
+                echo "An email with instructions has been sent to: <b>" . $email.'</b>';
+                $email = null;
             }
         }
     }
 
-    #to fix
-    function send_verification_email($verif_email = null, $verifCode/*, $url*/){
-        //remember to change the email of the app
-        try{
-            $mail = new PHPMailer();
-            $mail->IsSMTP();
-            // comment the line below to hide the server messages after sending an email.
-            // $mail->SMTPDebug  = 2;				
-            $mail->SMTPAuth   = true;
-            $mail->SMTPSecure = "tls";                 
-            $mail->Host       = "smtp.gmail.com";    
-            $mail->Port       = 587;
-            // --
-            $mail->Username   = "talesdemiletoxd@gmail.com"; 
-            $mail->Password   = "12345tales";   	
-            // --
-            $mail->SetFrom('talesdemiletoxd@gmail.com');
-            $mail->Subject    = 'VERIFICATION';
-            $mail->MsgHTML();
-            
-            $mail->AddAddress($verif_email);
-            $result = $mail->Send();
-            return $result;
-        } catch (Exception $e){
-            return FALSE;
-        }
-    }

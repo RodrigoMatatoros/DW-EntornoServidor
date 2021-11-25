@@ -21,8 +21,6 @@
             $passwdConf = $_POST['passwd-conf-register'];
             $age = intval($_POST['age-register']);
             $tel = $_POST['tel-register'];
-            ####CHECK THIS!!!
-            $pfp = $_POST['pfp-register'];
 
             // var_dump($passwd);
             // var_dump($passwdConf);
@@ -31,16 +29,12 @@
                 $encryptedPasswd = password_hash($passwd, PASSWORD_DEFAULT);
                 $pfp = upload_file();
                 register_user($name, $surname, $user, $email,$encryptedPasswd, $age, $tel, $pfp, $bd);
-                // isActive($user, 1, $bd);
+                // $toUserName = $name . ' ' . $surname;
+                $emailContent = "Click here to finish your registration:<br/>
+                <a href='http://localhost/project_first_term/index.php?page=login&verification=1&userEmail=$email'>CLICK ME!</a><br/><br/>
+                Welcome to our app!";
+                send_email($email, $emailContent);
                 header('Location: login.php');
-                
-                // $url = 'verification.php';
-                #######Future: verification email
-                // if(send_verification_email($email, $verifCode)){
-                //    header('Location: verification.php');
-                // } else {
-                //     echo '<p style=color:red>An error ocurred. Check your email';
-                // }
             } else {
                 echo '<p style="color:red">**ERROR: passwords do not match!</p>';
             }
@@ -84,7 +78,6 @@
                 <label for="passwd-register">Password*</label>
                 <input type="password" id="passwd-register" name="passwd-register" placeholder="Password" required /><br/>
 
-                <!--make a password confirmation here-->
                 <label for="passwd-conf-register">Confirm Password*</label>
                 <input type="password" id="passwd-conf-register" name="passwd-conf-register" placeholder="Password Confirmation" required /><br/>
 
@@ -95,7 +88,9 @@
                 <input type="tel" id="tel-register" name="tel-register" placeholder="Phone number" /><br/>
 
                 <label for="pfp-register">Profile picture</label>
-                <input type="file" id="pfp-register" name="pfp-register" placeholder="Choose a picture" /><br/><br/>
+                <input type="file" id="pfp-register" name="file" placeholder="Choose a picture" /><br/>
+                
+                <p>An email will be sent to your email to verify your account.</p>
 
                 <button type="submit">Register</button>
                 <button type="reset">Cancel</button><br/>

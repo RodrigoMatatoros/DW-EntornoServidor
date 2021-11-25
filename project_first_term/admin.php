@@ -77,27 +77,19 @@
     </head>
 
     <body>
-        <style>
-            nav{background-color: white;}
-            .nav-container{margin: 10px;background-color: white;position: sticky;
-                top: 0px;display: flex;justify-content: space-between;
-                align-items: center;z-index: 1;padding: 0 3em;border: 1px solid black;}
-            nav{padding: 5px;width: 100%;height: 100%;}
-            .nav-container a{margin: 1.5em;display: inline;
-                text-decoration: none;line-height: 0.2em;width: 5em;}
-            .nav-container a{color: black;}
-            .nav-container a:hover{text-decoration: underline;}
-        </style>
-        <div class="nav-container">
-            <nav>
-                <a href="logout.php">Logout</a>
-                <a href="chats.php">Home</a>
-            </nav>
-        </div>
+        <div class="container">
+            <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+            <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+                <span class="fs-4">Admin Zone</span>
+            </a>
 
-        <header>
-            <h1>Admin Zone</h1>
-        </header>
+            <ul class="nav nav-pills">
+                <li class="nav-item"><a href="logout.php" class="nav-link active" aria-current="page">Logout</a></li>
+                <li class="nav-item"><a href="chats.php" class="nav-link">Home</a></li>
+            </ul>   
+            </header>
+        </div>
 
         <table class="table table-success table-striped">
             <thead>

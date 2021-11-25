@@ -1,0 +1,56 @@
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+
+//Function to send emails
+function send_email($toUserMail, $toUserName, $subject, $content)
+{
+    require '../../vendor/autoload.php';
+    //Create a new PHPMailer instance
+    $mail = new PHPMailer();
+    //Tell PHPMailer to use SMTP
+    $mail->isSMTP();
+    //Configure logs for testing Set off(recomended on production)
+    $mail->SMTPDebug = SMTP::DEBUG_OFF;
+    // $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+    //Set the hostname of the mail server
+    $mail->Host = 'smtp.gmail.com';
+    //Set the SMTP port number:
+    // - 465 for SMTP with implicit TLS, a.k.a. RFC8314 SMTPS or
+    // - 587 for SMTP+STARTTLS
+    $mail->Port = 465;
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+    //Whether to use SMTP authentication
+    $mail->SMTPAuth = true;
+    //Username to use for SMTP authentication - use full email address for gmail
+    $mail->Username = 'luismonped4609@gmail.com';
+    //Password to use for SMTP authentication
+    $mail->Password = 'LuisMon4609';
+    $mail->setFrom('luismonped4609@gmail.com', 'Confirmation link');
+    //$mail->addReplyTo('replyto@example.com', 'First Last');
+    //Set who the message is to be sent to
+    $mail->addAddress($toUserMail, $toUserName);
+    //Set the subject line
+    $mail->Subject =  $subject;
+    //Read an HTML message body from an external file, convert referenced images to embedded,
+    //convert HTML into a basic plain-text alternative body
+    //$mail->msgHTML(file_get_contents('contents.html'), __DIR__);
+    $mail->MsgHTML($content);
+    $mail->AltBody = 'This is a plain-text message body';
+    //Attach an image file
+    //$mail->addAttachment('images/phpmailer_mini.png');
+    //send the message, check for errors
+    if (!$mail->send()) {
+        // echo 'Mailer Error: ' . $mail->ErrorInfo;
+        $sentMessageError = "There was an error, please check your information";
+        header('location: index.php?page=login&messageError=' . $sentMessageError);
+    } else {
+        // echo 'Message sent!';
+        $sentMessageCorrect = "The confirmation link was sent to your email";
+        header('location: index.php?page=login&messageSuccess=' . $sentMessageCorrect);
+        //Section 2: IMAP
+        //Uncomment these to save your message in the 'Sent Mail' folder.
+        #if (save_mail($mail)) {
+        #    echo "Message saved!";
+        #}
+    }
+}

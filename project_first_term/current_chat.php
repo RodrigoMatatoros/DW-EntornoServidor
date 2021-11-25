@@ -90,11 +90,19 @@
                             $msgUsername = $msg['username'];
                             $msgContent = $msg['content'];
                             $msgTimestamp = $msg['msgTime'];
+                            $msgFile = $msg['msgFile'];
+
+                            if(isset($msgFile)){
+                                $file = "<embed src='$msgFile' width='100px' height='60px' />";
+                            } else {
+                                $file = "";
+                            }
 
                             echo "
                                     <div $containerClass>
                                         <div class='message-sender'>$msgUsername</div>
                                         <p class='message-content'>$msgContent</p>
+                                        $file
                                         <div $timestampClass>$msgTimestamp</div>
                                     </div>
                                 ";
@@ -105,8 +113,10 @@
                         if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['message'])){
                             $date = date('Y-m-d H:i:s');
                             $newMessage = $_POST['message'];
-                            $message = send_message($newMessage, $userID, $chatID, $date, $bd);
-
+                                $file = upload_file();
+                                $message = send_message_file($newMessage, $userID, $chatID, $date, $file, $bd);
+                                // $message = send_message($newMessage, $userID, $chatID, $date, $bd);
+                            
                             if(!$message){
                                 // echo '<p style="color:red">**ERROR: Something went wrong and the message could not be sent.</p>';
                             } else {
@@ -118,14 +128,16 @@
                     ?>
                 </div>
                 <div class="send-message">
-                    <form action="" method="POST" autocomplete="off">
+                    <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
                         <div class="message-box">
                             <!-- <input type="text" id="message-box" name="message" placeholder="Escribe un mensaje..." autofocus> -->
                             <textarea rows="10" cols="50" name="message" placeholder="Type your message here..." autofocus></textarea>
                         </div>
+                        <div class="send-message-button">
+                            <input type="file" name="file">
+                        </div>
                         <div class="send-message-button" id="send-msg">
                             <button type="submit">Send</button>
-                            <!-- look how to make the chat div scroll down automatically -->
                         </div>
                     </form>
                 </div>

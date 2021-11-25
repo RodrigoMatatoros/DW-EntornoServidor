@@ -1,9 +1,12 @@
 <?php
     require_once 'utilities.php';
 
-    // if (isset($_GET["messageError"])) {
-    //     $messageError = $_GET["messageError"];
-    // }
+    if (isset($_GET['verification'])){
+        $verifEmail = $_GET['userEmail'];
+        $query1 = "UPDATE chatapp.users SET users.isActive = 1 WHERE users.email LIKE '$verifEmail'";
+        $result1 = $bd->query($query1);
+        // var_dump($result1);
+    }
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {  
     
@@ -52,30 +55,32 @@
    
 
     <body class="text-center">
-        <header>
-            <h1>SAMPLE TEXT</h1>
-        </header>
-        <?php
-            // if(isset($_GET["redirected"])){echo "<p>Login to continue</p>";}
-		    if(isset($err) and $err == TRUE){echo '<p style="color:red">ERROR: Check user and password</p>';}
-		?>
+        <main class="form-signin">
+            <header>
+                <h1>SAMPLE TEXT</h1>
+            </header>
+            <?php
+                // if(isset($_GET["redirected"])){echo "<p>Login to continue</p>";}
+                if(isset($err) and $err == TRUE){echo '<p style="color:red">ERROR: Check user and password</p>';}
+            ?>
 
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method='POST'>
-            <fieldset>
-                <legend>Login</legend>
-                <label for="user-login">User</label>
-                <input type="text" id="user-login" value="<?php if(isset($user))echo $user;?>" name="user-login" placeholder="Username" required autofocus/><br/>
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method='POST'>
+                <fieldset>
+                    <legend>Login</legend>
+                    <label for="user-login">User</label>
+                    <input type="text" id="user-login" value="<?php if(isset($user))echo $user;?>" name="user-login" placeholder="Username" required autofocus/><br/>
 
-                <label for="passwd-login">Password</label>
-                <input type="password" id="passwd-login" value = "<?php if(isset($passwd))echo $passwd;?>" name="passwd-login" placeholder="Password" required><br/>
-                <a href="passwd_recovery.php">Forgot your password?</a><br/><br/>
-                <!-- <a href="passwd_recovery.php">Forgot your password?</a><br/><br/> -->
+                    <label for="passwd-login">Password</label>
+                    <input type="password" id="passwd-login" value = "<?php if(isset($passwd))echo $passwd;?>" name="passwd-login" placeholder="Password" required><br/>
+                    <a href="passwd_recovery.php">Forgot your password?</a><br/><br/>
+                    <!-- <a href="passwd_recovery.php">Forgot your password?</a><br/><br/> -->
 
-                <button type="submit">Login</button>
-                <button type="reset">Cancel</button><br/><br/>
+                    <button type="submit">Login</button>
+                    <button type="reset">Cancel</button><br/><br/>
 
-                <a href="register.php">Or register if you do not have a user</a>
-            </fieldset>
-        </form>
+                    <a href="register.php">Or register if you do not have a user</a>
+                </fieldset>
+            </form>
+        </main>
     </body>
 </html>
